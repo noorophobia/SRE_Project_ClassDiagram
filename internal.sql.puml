@@ -1,0 +1,66 @@
+@startuml
+
+package "com.google.gson.internal.sql" {
+
+class SqlDateTypeAdapter {
+    - format : DateFormat
+    + read(in: JsonReader): java.sql.Date
+    + write(out: JsonWriter, value: java.sql.Date): void
+}
+
+class SqlTimeTypeAdapter {
+    - format : DateFormat
+    + read(in: JsonReader): java.sql.Time
+    + write(out: JsonWriter, value: java.sql.Time): void
+}
+
+class SqlTimestampTypeAdapter {
+    - dateTypeAdapter : TypeAdapter<Date>
+    + read(in: JsonReader): java.sql.Timestamp
+    + write(out: JsonWriter, value: java.sql.Timestamp): void
+}
+
+class SqlTypesSupport {
+    + SUPPORTS_SQL_TYPES : boolean
+    + DATE_DATE_TYPE : DateType
+    + TIMESTAMP_DATE_TYPE : DateType
+    + DATE_FACTORY : TypeAdapterFactory
+    + TIME_FACTORY : TypeAdapterFactory
+    + TIMESTAMP_FACTORY : TypeAdapterFactory
+}
+
+}
+
+' ========== Dependencies ==========
+
+SqlTypesSupport ..> DateType : <<uses>>
+SqlTypesSupport ..> TypeAdapterFactory : <<uses>>
+SqlTypesSupport ..> SqlDateTypeAdapter : <<uses>>
+SqlTypesSupport ..> SqlTimeTypeAdapter : <<uses>>
+SqlTypesSupport ..> SqlTimestampTypeAdapter : <<uses>>
+
+SqlTimestampTypeAdapter ..> Gson : <<uses>>
+SqlTimestampTypeAdapter ..> TypeAdapter : <<uses>>
+SqlTimestampTypeAdapter ..> JsonReader : <<uses>>
+SqlTimestampTypeAdapter ..> JsonWriter : <<uses>>
+SqlTimestampTypeAdapter ..> TypeAdapterFactory : <<uses>>
+SqlTimestampTypeAdapter ..> TypeToken : <<uses>>
+
+SqlTimeTypeAdapter ..> Gson : <<uses>>
+SqlTimeTypeAdapter ..> JsonSyntaxException : <<uses>>
+SqlTimeTypeAdapter ..> TypeAdapter : <<uses>>
+SqlTimeTypeAdapter ..> JsonReader : <<uses>>
+SqlTimeTypeAdapter ..> JsonWriter : <<uses>>
+SqlTimeTypeAdapter ..> DateFormat : <<uses>>
+SqlTimeTypeAdapter ..> TypeAdapterFactory : <<uses>>
+SqlTimeTypeAdapter ..> TypeToken : <<uses>>
+
+SqlDateTypeAdapter ..> Gson : <<uses>>
+SqlDateTypeAdapter ..> JsonSyntaxException : <<uses>>
+SqlDateTypeAdapter ..> TypeAdapter : <<uses>>
+SqlDateTypeAdapter ..> JsonReader : <<uses>>
+SqlDateTypeAdapter ..> JsonWriter : <<uses>>
+SqlDateTypeAdapter ..> TypeAdapterFactory : <<uses>>
+SqlDateTypeAdapter ..> TypeToken : <<uses>>
+
+@enduml

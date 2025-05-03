@@ -1,0 +1,25 @@
+@startuml
+package "com.google.gson.internal.reflect" {
+
+' Main class
+class ReflectionHelper {
+  + makeAccessible(AccessibleObject) : void
+  + getAccessibleObjectDescription(AccessibleObject, boolean) : String
+  + fieldToString(Field) : String
+  + constructorToString(Constructor<?>) : String
+  + tryMakeAccessible(Constructor<?>) : String
+  + isRecord(Class<?>) : boolean
+  + getRecordComponentNames(Class<?>) : String[]
+  + getAccessor(Class<?>, Field) : Method
+  + getCanonicalRecordConstructor(Class<T>) : Constructor<T>
+  + createExceptionForUnexpectedIllegalAccess(IllegalAccessException) : RuntimeException
+}
+}
+
+ 
+' Associations
+ReflectionHelper --> JsonIOException : throws
+ReflectionHelper --> GsonBuildConfig : uses version
+ReflectionHelper --> TroubleshootingGuide : uses for error URLs
+
+@enduml

@@ -1,0 +1,1308 @@
+@startuml
+' Title
+skinparam classAttributeIconSize 0
+package "com.google.gson" {
+class Gson {
+  - threadLocalAdapterResults : ThreadLocal<Map<TypeToken<?>, TypeAdapter<?>>> 
+  - typeTokenCache : ConcurrentMap<TypeToken<?>, TypeAdapter<?>>
+  - constructorConstructor : ConstructorConstructor
+  - jsonAdapterFactory : JsonAdapterAnnotationTypeAdapterFactory
+  - factories : List<TypeAdapterFactory>
+  - excluder : Excluder
+  - fieldNamingStrategy : FieldNamingStrategy
+  - instanceCreators : Map<Type, InstanceCreator<?>>
+  - serializeNulls : boolean
+  - complexMapKeySerialization : boolean
+  - generateNonExecutableJson : boolean
+  - htmlSafe : boolean
+  - formattingStyle : FormattingStyle
+  - strictness : Strictness
+  - serializeSpecialFloatingPointValues : boolean
+  - useJdkUnsafe : boolean
+  - datePattern : String
+  - dateStyle : int
+  - timeStyle : int
+  - longSerializationPolicy : LongSerializationPolicy
+  - builderFactories : List<TypeAdapterFactory>
+  - builderHierarchyFactories : List<TypeAdapterFactory>
+  - objectToNumberStrategy : ToNumberStrategy
+  - numberToNumberStrategy : ToNumberStrategy
+  - reflectionFilters : List<ReflectionAccessFilter>
+
+  + Gson()
+  + newBuilder() : GsonBuilder
+  + getAdapter(TypeToken<T>) : TypeAdapter<T>
+  + getAdapter(Class<T>) : TypeAdapter<T>
+  + getDelegateAdapter(TypeAdapterFactory, TypeToken<T>) : TypeAdapter<T>
+  + toJsonTree(Object) : JsonElement
+  + toJsonTree(Object, Type) : JsonElement
+  + toJson(Object) : String
+  + fromJson(String, Class<T>) : T
+  + fromJson(String, Type) : T
+  + fromJson(String, TypeToken<T>) : T
+}
+
+class GsonBuilder {
+  - excluder : Excluder
+  - longSerializationPolicy : LongSerializationPolicy
+  - fieldNamingPolicy : FieldNamingStrategy
+  - instanceCreators : Map<Type, InstanceCreator<?>>
+  - factories : List<TypeAdapterFactory>
+  - hierarchyFactories : List<TypeAdapterFactory>
+  - serializeNulls : boolean
+  - datePattern : String
+  - dateStyle : int
+  - timeStyle : int
+  - complexMapKeySerialization : boolean
+  - serializeSpecialFloatingPointValues : boolean
+  - escapeHtmlChars : boolean
+  - formattingStyle : FormattingStyle
+  - generateNonExecutableJson : boolean
+  - strictness : Strictness
+  - useJdkUnsafe : boolean
+  - objectToNumberStrategy : ToNumberStrategy
+  - numberToNumberStrategy : ToNumberStrategy
+  - reflectionFilters : ArrayDeque<ReflectionAccessFilter>
+
+  + GsonBuilder()
+  + setVersion(double) : GsonBuilder
+  + excludeFieldsWithModifiers(int...) : GsonBuilder
+  + generateNonExecutableJson() : GsonBuilder
+  + excludeFieldsWithoutExposeAnnotation() : GsonBuilder
+  + serializeNulls() : GsonBuilder
+  + enableComplexMapKeySerialization() : GsonBuilder
+  + disableInnerClassSerialization() : GsonBuilder
+  + setLongSerializationPolicy(LongSerializationPolicy) : GsonBuilder
+  + setFieldNamingPolicy(FieldNamingPolicy) : GsonBuilder
+  + setFieldNamingStrategy(FieldNamingStrategy) : GsonBuilder
+  + setObjectToNumberStrategy(ToNumberStrategy) : GsonBuilder
+  + setNumberToNumberStrategy(ToNumberStrategy) : GsonBuilder
+  + setExclusionStrategies(ExclusionStrategy...) : GsonBuilder
+  + addSerializationExclusionStrategy(ExclusionStrategy) : GsonBuilder
+  + addDeserializationExclusionStrategy(ExclusionStrategy) : GsonBuilder
+  + setPrettyPrinting() : GsonBuilder
+  + setFormattingStyle(FormattingStyle) : GsonBuilder
+  + setLenient() : GsonBuilder
+  + setStrictness(Strictness) : GsonBuilder
+  + disableHtmlEscaping() : GsonBuilder
+  + setDateFormat(String) : GsonBuilder
+  + setDateFormat(int) : GsonBuilder
+  + setDateFormat(int, int) : GsonBuilder
+  + registerTypeAdapter(Type, Object) : GsonBuilder
+  + registerTypeAdapterFactory(TypeAdapterFactory) : GsonBuilder
+  + registerTypeHierarchyAdapter(Class<?>, Object) : GsonBuilder
+  + serializeSpecialFloatingPointValues() : GsonBuilder
+  + disableJdkUnsafe() : GsonBuilder
+  + addReflectionAccessFilter(ReflectionAccessFilter) : GsonBuilder
+  + create() : Gson
+}
+
+
+class FieldAttributes {
+  - field: Field
+
+  + FieldAttributes(f: Field)
+  + getDeclaringClass(): Class<?>
+  + getName(): String
+  + getDeclaredType(): Type
+  + getDeclaredClass(): Class<?>
+  + getAnnotation<T extends Annotation>(annotation: Class<T>): T
+  + getAnnotations(): Collection<Annotation>
+  + hasModifier(modifier: int): boolean
+  + toString(): String
+}
+ 
+interface FieldNamingStrategy {
+  + translateName(f: Field): String
+  + alternateNames(f: Field): List<String>
+}
+
+enum FieldNamingPolicy {
+  IDENTITY
+  UPPER_CAMEL_CASE
+  UPPER_CAMEL_CASE_WITH_SPACES
+  UPPER_CASE_WITH_UNDERSCORES
+  LOWER_CASE_WITH_UNDERSCORES
+  LOWER_CASE_WITH_DASHES
+  LOWER_CASE_WITH_DOTS
+}
+' FormattingStyle class
+class FormattingStyle {
+  - newline: String
+  - indent: String
+  - spaceAfterSeparators: boolean
+
+  + withNewline(newline: String): FormattingStyle
+  + withIndent(indent: String): FormattingStyle
+  + withSpaceAfterSeparators(spaceAfterSeparators: boolean): FormattingStyle
+  + getNewline(): String
+  + getIndent(): String
+  + usesSpaceAfterSeparators(): boolean
+
+  {static} + COMPACT: FormattingStyle
+  {static} + PRETTY: FormattingStyle
+}
+
+' InstanceCreator interface
+interface InstanceCreator<T> {
+  + createInstance(type: Type): T
+}
+' JsonArray class
+class JsonArray {
+  - elements: ArrayList<JsonElement>
+
+  + JsonArray()
+  + JsonArray(capacity: int)
+  + deepCopy(): JsonArray
+  + add(Boolean): void
+  + add(Character): void
+  + add(Number): void
+  + add(String): void
+  + add(JsonElement): void
+  + addAll(JsonArray): void
+  + set(index: int, element: JsonElement): JsonElement
+  + remove(JsonElement): boolean
+  + remove(index: int): JsonElement
+  + contains(JsonElement): boolean
+  + size(): int
+  + isEmpty(): boolean
+  + iterator(): Iterator<JsonElement>
+  + get(i: int): JsonElement
+  + getAsNumber(): Number
+  + getAsString(): String
+  + getAsDouble(): double
+  + getAsBigDecimal(): BigDecimal
+  + getAsBigInteger(): BigInteger
+  + getAsFloat(): float
+  + getAsLong(): long
+  + getAsInt(): int
+  + getAsByte(): byte
+  + getAsCharacter(): char
+  + getAsShort(): short
+  + getAsBoolean(): boolean
+  + asList(): List<JsonElement>
+  + equals(Object): boolean
+  + hashCode(): int
+}
+
+
+
+' JsonDeserializationContext interface
+interface JsonDeserializationContext {
+  + deserialize<T>(json: JsonElement, typeOfT: Type): T
+}
+' JsonDeserializer interface
+interface JsonDeserializer<T> {
+  + deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): T
+}
+
+' JsonElement abstract class
+abstract class JsonElement {
+  + deepCopy(): JsonElement
+  + isJsonArray(): boolean
+  + isJsonObject(): boolean
+  + isJsonPrimitive(): boolean
+  + isJsonNull(): boolean
+  + getAsJsonObject(): JsonObject
+  + getAsJsonArray(): JsonArray
+  + getAsJsonPrimitive(): JsonPrimitive
+  + getAsJsonNull(): JsonNull
+  + getAsBoolean(): boolean
+  + getAsNumber(): Number
+  + getAsString(): String
+  + getAsDouble(): double
+  + getAsFloat(): float
+  + getAsLong(): long
+  + getAsInt(): int
+  + getAsByte(): byte
+  + getAsCharacter(): char
+  + getAsBigDecimal(): BigDecimal
+  + getAsBigInteger(): BigInteger
+  + getAsShort(): short
+  + toString(): String
+}
+ 
+class JsonIOException {
+  - static final long serialVersionUID = 1L
+  + JsonIOException(msg: String)
+  + JsonIOException(msg: String, cause: Throwable)
+  + JsonIOException(cause: Throwable)
+}
+
+class JsonNull {
+  - static final JsonNull INSTANCE
+  + JsonNull() <deprecated>
+  + deepCopy(): JsonNull
+  + hashCode(): int
+  + equals(other: Object): boolean
+}
+ 
+class JsonParseException {
+  - static final long serialVersionUID = -4086729973971783390L
+  + JsonParseException(msg: String)
+  + JsonParseException(msg: String, cause: Throwable)
+  + JsonParseException(cause: Throwable)
+}
+
+class JsonObject {
+  - members: LinkedTreeMap<String, JsonElement>
+  + JsonObject()
+  + deepCopy(): JsonObject
+  + add(property: String, value: JsonElement)
+  + remove(property: String): JsonElement
+  + addProperty(property: String, value: String)
+  + addProperty(property: String, value: Number)
+  + addProperty(property: String, value: Boolean)
+  + addProperty(property: String, value: Character)
+  + entrySet(): Set<Map.Entry<String, JsonElement>>
+  + keySet(): Set<String>
+  + size(): int
+  + isEmpty(): boolean
+  + has(memberName: String): boolean
+  + get(memberName: String): JsonElement
+  + getAsJsonPrimitive(memberName: String): JsonPrimitive
+  + getAsJsonArray(memberName: String): JsonArray
+  + getAsJsonObject(memberName: String): JsonObject
+  + asMap(): Map<String, JsonElement>
+  + equals(o: Object): boolean
+  + hashCode(): int
+}
+
+
+class JsonParser {
+  +parseString(json: String) : JsonElement
+  +parseReader(reader: Reader) : JsonElement
+  +parseReader(jsonReader: JsonReader) : JsonElement
+}
+
+class JsonPrimitive {
+  +JsonPrimitive(bool: Boolean)
+  +JsonPrimitive(number: Number)
+  +JsonPrimitive(string: String)
+  +JsonPrimitive(c: Character)
+  +deepCopy() : JsonPrimitive
+  +isBoolean() : boolean
+  +getAsBoolean() : boolean
+  +isNumber() : boolean
+  +getAsNumber() : Number
+  +isString() : boolean
+  +getAsString() : String
+  +getAsDouble() : double
+  +getAsBigDecimal() : BigDecimal
+  +getAsBigInteger() : BigInteger
+  +getAsFloat() : float
+  +getAsLong() : long
+  +getAsShort() : short
+  +getAsInt() : int
+  +getAsByte() : byte
+  +getAsCharacter() : char
+  +hashCode() : int
+  +equals(obj: Object) : boolean
+}
+
+
+
+class JsonStreamParser {
+  - JsonReader parser
+  - Object lock
+  + next() : JsonElement
+  + hasNext() : boolean
+  + remove() : void
+}
+
+ 
+' Class for JsonSyntaxException
+class JsonSyntaxException {
+  - static final long serialVersionUID
+  + JsonSyntaxException(String msg)
+  + JsonSyntaxException(String msg, Throwable cause)
+  + JsonSyntaxException(Throwable cause)
+}
+
+ 
+ 
+ class TypeAdapter<T> {
+  +TypeAdapter()
+  +void write(JsonWriter out, T value) throws IOException
+  +String toJson(T value)
+  +JsonElement toJsonTree(T value)
+  +T read(JsonReader in) throws IOException
+  +T fromJson(Reader in) throws IOException
+  +T fromJson(String json) throws IOException
+  +T fromJsonTree(JsonElement jsonTree)
+  +TypeAdapter<T> nullSafe()
+}
+
+class NullSafeTypeAdapter {
+  +void write(JsonWriter out, T value) throws IOException
+  +T read(JsonReader reader) throws IOException
+  +String toString()
+}
+ interface TypeAdapterFactory {
+  +<T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
+}
+' Class for ReflectionAccessFilter
+interface ReflectionAccessFilter {
+  + check(Class<?> rawClass) : FilterResult
+}
+interface ExclusionStrategy {
+  + shouldSkipField(f: FieldAttributes): boolean
+  + shouldSkipClass(clazz: Class<?>): boolean
+}
+' Define interfaces and classes
+
+interface JsonSerializationContext {
+  + serialize(Object src)
+  + serialize(Object src, Type typeOfSrc)
+}
+
+interface JsonSerializer<T> {
+  + serialize(T src, Type typeOfSrc, JsonSerializationContext context)
+}
+ ' Interface for ToNumberStrategy
+interface ToNumberStrategy {
+  + readNumber(JsonReader in) : Number
+}
+
+ ' Enum for FilterResult
+enum FilterResult {
+  ALLOW
+  INDECISIVE
+  BLOCK_INACCESSIBLE
+  BLOCK_ALL
+}
+
+' Enum for Strictness
+enum Strictness {
+  LENIENT
+  LEGACY_STRICT
+  STRICT
+}
+
+ 
+' Enum for ToNumberPolicy
+enum ToNumberPolicy {
+  DOUBLE
+  LAZILY_PARSED_NUMBER
+  LONG_OR_DOUBLE
+  BIG_DECIMAL
+}
+' Enum for LongSerializationPolicy
+enum LongSerializationPolicy {
+  DEFAULT
+  STRING
+}
+}
+
+package "com.google.gson.annotations" {
+
+  annotation Expose {
+    +boolean serialize() = true
+    +boolean deserialize() = true
+  }
+
+  annotation JsonAdapter {
+    +Class<?> value()
+    +boolean nullSafe() = true
+  }
+ annotation SerializedName {
+    +String value()
+    +String[] alternate() = {}
+  }
+  
+  annotation Since {
+    +double value()
+  }
+
+  annotation Until {
+    +double value()
+  }
+}
+package "com.google.gson.reflect" {
+
+class TypeToken<T> {
+    + rawType : Class<? super T>
+    + type : Type
+    + hashCode : int
+    + getRawType() : Class<? super T>
+    + getType() : Type
+    + isAssignableFrom(Class<?>) : boolean
+    + isAssignableFrom(Type) : boolean
+    + isAssignableFrom(TypeToken<?>) : boolean
+    + hashCode() : int
+    + equals(Object) : boolean
+    + toString() : String
+    + get(Type) : TypeToken<?>
+    + get(Class<T>) : TypeToken<T>
+    + getParameterized(Type, Type...) : TypeToken<?>
+    + getArray(Type) : TypeToken<?>
+}
+}
+
+package "com.google.gson.internal.bind" {
+
+' ---------- ArrayTypeAdapter ----------
+class ArrayTypeAdapter {
+  - componentType : Class
+  - componentTypeAdapter : TypeAdapter
+  + ArrayTypeAdapter(Gson, TypeAdapter, Class)
+  + read(JsonReader) : Object
+  + write(JsonWriter, Object) : void
+}
+
+' ---------- CollectionTypeAdapterFactory ----------
+class CollectionTypeAdapterFactory {
+  - constructorConstructor : ConstructorConstructor
+  + CollectionTypeAdapterFactory(ConstructorConstructor)
+  + create(Gson, TypeToken) : TypeAdapter
+}
+
+' ---------- Inner Adapter Class ----------
+class CollectionTypeAdapterFactoryAdapter {
+  - elementTypeAdapter : TypeAdapter
+  - constructor : ObjectConstructor
+  + read(JsonReader) : Collection
+  + write(JsonWriter, Collection) : void
+}
+ 
+' ---------- DefaultDateTypeAdapter ----------
+class DefaultDateTypeAdapter {
+  - dateFormats : List
+  - dateType : DateType
+  + write(JsonWriter, Date) : void
+  + read(JsonReader) : Date
+  + toString() : String
+}
+
+
+' ---------- DateType Inner Class ----------
+class DateType {
+  - dateClass : Class
+  + createAdapterFactory(String) : TypeAdapterFactory
+  + createAdapterFactory(int, int) : TypeAdapterFactory
+  + deserialize(Date) : Date
+}
+
+' ---------- EnumTypeAdapter ----------
+class EnumTypeAdapter {
+  - nameToConstant : Map
+  - stringToConstant : Map
+  - constantToName : Map
+  + read(JsonReader)
+  + write(JsonWriter, value)
+}
+
+' ---------- TypeAdapterFactory ----------
+class TypeAdapterFactory {
+  + create(Gson, TypeToken) : TypeAdapter
+}
+
+' ---------- JsonAdapterAnnotationTypeAdapterFactory ----------
+class JsonAdapterAnnotationTypeAdapterFactory {
+  - constructorConstructor : ConstructorConstructor
+  - adapterFactoryMap : ConcurrentMap
+}
+
+' ---------- JsonElementTypeAdapter ----------
+class JsonElementTypeAdapter {
+  + read(JsonReader) : JsonElement
+  + write(JsonWriter, JsonElement) : void
+}
+
+' ---------- JsonTreeReader ----------
+class JsonTreeReader {
+  + JsonTreeReader(JsonElement)
+  + beginArray()
+  + endArray()
+  + beginObject()
+  + endObject()
+  + hasNext() : boolean
+  + peek() : JsonToken
+  + nextName() : String
+  + nextString() : String
+  + nextBoolean() : boolean
+  + nextNull() : void
+  + nextDouble() : double
+  + nextLong() : long
+  + nextInt() : int
+  + nextJsonElement() : JsonElement
+  + close() : void
+  + skipValue() : void
+  + getPath() : String
+  + getPreviousPath() : String
+  + promoteNameToValue() : void
+}
+
+' ---------- JsonTreeWriter ----------
+class JsonTreeWriter {
+  + JsonTreeWriter()
+  + get() : JsonElement
+  + beginArray() : JsonWriter
+  + endArray() : JsonWriter
+  + beginObject() : JsonWriter
+  + endObject() : JsonWriter
+  + name(String) : JsonWriter
+  + value(String) : JsonWriter
+  + value(boolean) : JsonWriter
+  + value(Boolean) : JsonWriter
+  + value(float) : JsonWriter
+  + value(double) : JsonWriter
+  + value(long) : JsonWriter
+  + value(Number) : JsonWriter
+  + nullValue() : JsonWriter
+  + flush() : void
+  + close() : void
+}
+
+' ---------- MapTypeAdapterFactory ----------
+class MapTypeAdapterFactory {
+  - constructorConstructor : ConstructorConstructor
+  - complexMapKeySerialization : boolean
+  + create(Gson, TypeToken) : TypeAdapter
+}
+
+class MapTypeAdapterFactoryAdapter {
+  - keyTypeAdapter : TypeAdapter
+  - valueTypeAdapter : TypeAdapter
+  - constructor : ObjectConstructor
+}
+
+' ---------- NumberTypeAdapter ----------
+class NumberTypeAdapter {
+  - toNumberStrategy : ToNumberStrategy
+  + read(JsonReader) : Number
+  + write(JsonWriter, Number) : void
+  + getFactory(ToNumberStrategy) : TypeAdapterFactory
+}
+
+' ---------- ObjectTypeAdapter ----------
+class ObjectTypeAdapter {
+  - gson : Gson
+  - toNumberStrategy : ToNumberStrategy
+  + read(JsonReader) : Object
+  + write(JsonWriter, Object) : void
+  + getFactory(ToNumberStrategy) : TypeAdapterFactory
+  - tryBeginNesting(...) : Object
+  - readTerminal(...) : Object
+}
+
+' ---------- ReflectiveTypeAdapterFactory ----------
+class ReflectiveTypeAdapterFactory {
+  + create(Gson, TypeToken) : TypeAdapter
+  class Adapter
+}
+
+' ---------- SerializationDelegatingTypeAdapter ----------
+abstract class SerializationDelegatingTypeAdapter {
+  + getSerializationDelegate() : TypeAdapter
+}
+
+' ---------- TreeTypeAdapter ----------
+class TreeTypeAdapter {
+  + read(JsonReader)
+  + write(JsonWriter, value)
+  + getSerializationDelegate() : TypeAdapter
+  + newFactory(TypeToken, Object) : TypeAdapterFactory
+  + newFactoryWithMatchRawType(TypeToken, Object) : TypeAdapterFactory
+  + newTypeHierarchyFactory(Class, Object) : TypeAdapterFactory
+}
+
+class TreeTypeAdapterGsonContextImpl {
+  + serialize(Object) : JsonElement
+  + serialize(Object, Type) : JsonElement
+  + deserialize(JsonElement, Type) : Object
+}
+
+class TreeTypeAdapterSingleTypeFactory {
+  + create(Gson, TypeToken) : TypeAdapter
+}
+
+' ---------- TypeAdapterRuntimeTypeWrapper ----------
+class TypeAdapterRuntimeTypeWrapper {
+  - context : Gson
+  - delegate : TypeAdapter
+  - type : Type
+  + read(JsonReader)
+  + write(JsonWriter, value)
+  - isReflective(TypeAdapter) : boolean
+  - getRuntimeTypeIfMoreSpecific(Type, Object) : Type
+}
+
+' ---------- TypeAdapters ----------
+class TypeAdapters {
+  - TypeAdapters()
+  + newFactory(...) : TypeAdapterFactory
+  + newFactoryForMultipleTypes(...) : TypeAdapterFactory
+  + newTypeHierarchyFactory(...) : TypeAdapterFactory
+}
+
+} 
+package "com.google.gson.internal.bind.util" {
+
+' Main utility class
+class ISO8601Utils {
+  - UTC_ID : String
+  - TIMEZONE_UTC : TimeZone
+  + format(date : Date) : String
+  + format(date : Date, millis : boolean) : String
+  + format(date : Date, millis : boolean, tz : TimeZone) : String
+  + parse(date : String, pos : ParsePosition) : Date
+}
+}
+
+
+package "com.google.gson.internal" {
+
+class ConstructorConstructor {
+  -Map<Type, InstanceCreator<?>> instanceCreators
+  -boolean useJdkUnsafe
+  -List<ReflectionAccessFilter> reflectionFilters
+  
+  +ConstructorConstructor(instanceCreators: Map<Type, InstanceCreator<?>>, useJdkUnsafe: boolean, reflectionFilters: List<ReflectionAccessFilter>)
+  +<T> ObjectConstructor<T> get(typeToken: TypeToken<T>): ObjectConstructor<T>
+  +<T> ObjectConstructor<T> get(typeToken: TypeToken<T>, allowUnsafe: boolean): ObjectConstructor<T>
+  -String checkInstantiable(c: Class<?>): String
+  -<T> ObjectConstructor<T> newSpecialCollectionConstructor(type: Type, rawType: Class<? super T>): ObjectConstructor<T>
+  -<T> ObjectConstructor<T> newDefaultConstructor(rawType: Class<? super T>, filterResult: FilterResult): ObjectConstructor<T>
+  -<T> ObjectConstructor<T> newDefaultImplementationConstructor(type: Type, rawType: Class<? super T>): ObjectConstructor<T>
+  -ObjectConstructor<? extends Collection<? extends Object>> newCollectionConstructor(rawType: Class<?>): ObjectConstructor<? extends Collection<? extends Object>>
+  -ObjectConstructor<? extends Map<? extends Object, Object>> newMapConstructor(type: Type, rawType: Class<?>): ObjectConstructor<? extends Map<? extends Object, Object>>
+  -<T> ObjectConstructor<T> newUnsafeAllocator(rawType: Class<? super T>): ObjectConstructor<T>
+}
+ 
+class Excluder {
+  - double version
+  - int modifiers
+  - boolean serializeInnerClasses
+  - boolean requireExpose
+  - List<ExclusionStrategy> serializationStrategies
+  - List<ExclusionStrategy> deserializationStrategies
+  + Excluder clone()
+  + Excluder withVersion(double ignoreVersionsAfter)
+  + Excluder withModifiers(int... modifiers)
+  + Excluder disableInnerClassSerialization()
+  + Excluder excludeFieldsWithoutExposeAnnotation()
+  + Excluder withExclusionStrategy(ExclusionStrategy exclusionStrategy, boolean serialization, boolean deserialization)
+  + <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
+  + boolean excludeField(Field field, boolean serialize)
+  + boolean excludeClass(Class<?> clazz, boolean serialize)
+}
+
+class GsonPreconditions {
+  - GsonPreconditions()
+  + static <T> T checkNotNull(T obj)
+  + static void checkArgument(boolean condition)
+}
+ 
+  class GsonTypes {
+    - GsonTypes()
+    {static} +ParameterizedType newParameterizedTypeWithOwner(Type ownerType, Class<?> rawType, Type... typeArguments)
+    {static} +GenericArrayType arrayOf(Type componentType)
+    {static} +WildcardType subtypeOf(Type bound)
+    {static} +WildcardType supertypeOf(Type bound)
+    {static} +Type canonicalize(Type type)
+    {static} +Class<?> getRawType(Type type)
+    {static} +boolean equals(Type a, Type b)
+  }
+class JavaVersion {
+  - static final int majorJavaVersion
+  - static int determineMajorJavaVersion()
+  - static int parseMajorJavaVersion(String javaVersion)
+  - static int parseDotted(String javaVersion)
+  - static int extractBeginningInt(String javaVersion)
+  + static int getMajorJavaVersion()
+  + static boolean isJava9OrLater()
+  - JavaVersion()
+}
+ 
+class JsonReaderInternalAccess {
+  + static volatile JsonReaderInternalAccess INSTANCE
+  + abstract void promoteNameToValue(JsonReader reader)
+}
+
+ 
+class LazilyParsedNumber {
+  - final String value
+  + LazilyParsedNumber(String value)
+  + int intValue()
+  + long longValue()
+  + float floatValue()
+  + double doubleValue()
+  + String toString()
+  + int hashCode()
+  + boolean equals(Object obj)
+  - BigDecimal asBigDecimal()
+  - Object writeReplace()
+  - void readObject(ObjectInputStream in)
+}
+
+ 
+' ========== Main Class ==========
+class LinkedTreeMap<K, V> {
+  - Comparator<? super K> comparator
+  - boolean allowNullValues
+  - Node<K, V> root
+  - int size
+  - int modCount
+  - Node<K, V> header
+  + LinkedTreeMap()
+  + LinkedTreeMap(boolean allowNullValues)
+  + LinkedTreeMap(Comparator<? super K>, boolean allowNullValues)
+  + int size()
+  + V get(Object key)
+  + boolean containsKey(Object key)
+  + V put(K key, V value)
+  + V remove(Object key)
+  + void clear()
+  + Set<Entry<K, V>> entrySet()
+  + Set<K> keySet()
+}
+
+ 
+
+' ========== Node ==========
+class Node<K, V> {
+  - Node<K, V> parent
+  - Node<K, V> left
+  - Node<K, V> right
+  - Node<K, V> next
+  - Node<K, V> prev
+  - K key
+  - V value
+  - int height
+  + Node(boolean allowNullValue)
+  + Node(boolean, Node<K, V>, K, Node<K, V>, Node<K, V>)
+  + K getKey()
+  + V getValue()
+  + V setValue(V value)
+  + boolean equals(Object)
+  + int hashCode()
+  + Node<K, V> first()
+  + Node<K, V> last()
+}
+
+
+' ========== EntrySet ==========
+class EntrySet {
+  + int size()
+  + Iterator<Entry<K, V>> iterator()
+  + boolean contains(Object)
+  + boolean remove(Object)
+  + void clear()
+}
+
+ 
+
+' ========== KeySet ==========
+class KeySet {
+  + int size()
+  + Iterator<K> iterator()
+  + boolean contains(Object)
+  + boolean remove(Object)
+  + void clear()
+}
+
+
+
+' ========== LinkedTreeMapIterator ==========
+abstract class LinkedTreeMapIterator<T> {
+  - Node<K, V> next
+  - Node<K, V> lastReturned
+  - int expectedModCount
+  + boolean hasNext()
+  + void remove()
+}
+
+ 
+
+class NonNullElementWrapperList<E> {
+  - ArrayList<E> delegate
+  + NonNullElementWrapperList(ArrayList<E> delegate)
+  + E get(int index)
+  + int size()
+  + E set(int index, E element)
+  + void add(int index, E element)
+  + E remove(int index)
+  + void clear()
+  + boolean remove(Object o)
+  + boolean removeAll(Collection<?> c)
+  + boolean retainAll(Collection<?> c)
+  + boolean contains(Object o)
+  + int indexOf(Object o)
+  + int lastIndexOf(Object o)
+  + Object[] toArray()
+  + <T> T[] toArray(T[] a)
+  + boolean equals(Object o)
+  + int hashCode()
+}
+
+ 
+class NumberLimits {
+  - static final int MAX_NUMBER_STRING_LENGTH
+  - NumberLimits()
+  - static void checkNumberStringLength(String s)
+  + static BigDecimal parseBigDecimal(String s)
+  + static BigInteger parseBigInteger(String s)
+}
+
+
+' ---------- Interface ----------
+interface ObjectConstructor<T> {
+  + T construct()
+}
+
+' ---------- PreJava9DateFormatProvider Class ----------
+class PreJava9DateFormatProvider {
+  - PreJava9DateFormatProvider()
+  + static DateFormat getUsDateTimeFormat(int dateStyle, int timeStyle)
+  - static String getDatePartOfDateTimePattern(int dateStyle)
+  - static String getTimePartOfDateTimePattern(int timeStyle)
+}
+
+' 
+ 
+' -------- Primitives Class --------
+class Primitives {
+  - Primitives()
+  + static boolean isPrimitive(Type type)
+  + static boolean isWrapperType(Type type)
+  + static <T> Class<T> wrap(Class<T> type)
+  + static <T> Class<T> unwrap(Class<T> type)
+}
+
+ 
+
+' -------- ReflectionAccessFilterHelper Class has inner classes  --------
+class ReflectionAccessFilterHelper {
+  - ReflectionAccessFilterHelper()
+  + static boolean isJavaType(Class<?> c)
+  + static boolean isAndroidType(Class<?> c)
+  + static boolean isAnyPlatformType(Class<?> c)
+  + static FilterResult getFilterResult(List<ReflectionAccessFilter> filters, Class<?> c)
+  + static boolean canAccess(AccessibleObject obj, Object o)
+}
+ 
+ 
+
+
+class AccessChecker {
+  + boolean canAccess(AccessibleObject accessibleObject, Object object)
+  {abstract}
+  + static AccessChecker INSTANCE
+}
+
+' --------  Inner Class ended --------
+
+' -------- Streams has Inner Classes --------
+
+ 
+class Streams {
+  - Streams()
+  + static JsonElement parse(JsonReader reader)
+  + static void write(JsonElement element, JsonWriter writer)
+  + static Writer writerForAppendable(Appendable appendable)
+}
+
+class AppendableWriter {
+  - Appendable appendable
+  - CurrentWrite currentWrite
+  + void write(char[] chars, int offset, int length)
+  + void write(int i)
+  + void write(String str, int off, int len)
+  + void flush()
+  + void close()
+  + Writer append(CharSequence csq)
+  + Writer append(CharSequence csq, int start, int end)
+}
+
+class CurrentWrite {
+  - char[] chars
+  - String cachedString
+  + void setChars(char[] chars)
+  + int length()
+  + char charAt(int i)
+  + CharSequence subSequence(int start, int end)
+  + String toString()
+}
+ ' --------  Inner Classes ended  --------
+
+ abstract class UnsafeAllocator {
+  + abstract <T> T newInstance(Class<T> c)
+  - static void assertInstantiable(Class<?> c)
+  + static final UnsafeAllocator INSTANCE
+  - static UnsafeAllocator create()
+}
+ class TroubleshootingGuide {
+        + createUrl(id: String): String
+    }
+}
+
+ 
+package "com.google.gson.internal.reflect" {
+
+' Main class
+class ReflectionHelper {
+  + makeAccessible(AccessibleObject) : void
+  + getAccessibleObjectDescription(AccessibleObject, boolean) : String
+  + fieldToString(Field) : String
+  + constructorToString(Constructor<?>) : String
+  + tryMakeAccessible(Constructor<?>) : String
+  + isRecord(Class<?>) : boolean
+  + getRecordComponentNames(Class<?>) : String[]
+  + getAccessor(Class<?>, Field) : Method
+  + getCanonicalRecordConstructor(Class<T>) : Constructor<T>
+  + createExceptionForUnexpectedIllegalAccess(IllegalAccessException) : RuntimeException
+}
+}
+
+package "com.google.gson.internal.sql" {
+
+class SqlDateTypeAdapter {
+    - format : DateFormat
+    + read(in: JsonReader): java.sql.Date
+    + write(out: JsonWriter, value: java.sql.Date): void
+}
+
+class SqlTimeTypeAdapter {
+    - format : DateFormat
+    + read(in: JsonReader): java.sql.Time
+    + write(out: JsonWriter, value: java.sql.Time): void
+}
+
+class SqlTimestampTypeAdapter {
+    - dateTypeAdapter : TypeAdapter<Date>
+    + read(in: JsonReader): java.sql.Timestamp
+    + write(out: JsonWriter, value: java.sql.Timestamp): void
+}
+
+class SqlTypesSupport {
+    + SUPPORTS_SQL_TYPES : boolean
+    + DATE_DATE_TYPE : DateType
+    + TIMESTAMP_DATE_TYPE : DateType
+    + DATE_FACTORY : TypeAdapterFactory
+    + TIME_FACTORY : TypeAdapterFactory
+    + TIMESTAMP_FACTORY : TypeAdapterFactory
+}
+
+}
+
+
+TypeAdapterFactory --|> TypeAdapter
+TypeAdapterFactory -- Gson
+TypeAdapterFactory -- TypeToken
+TypeAdapter -- JsonWriter
+TypeAdapter -- JsonReader
+
+ 
+
+TypeAdapter <|-- NullSafeTypeAdapter
+TypeAdapter -- JsonWriter
+TypeAdapter -- JsonReader
+TypeAdapter -- JsonElement
+
+ 
+
+' ToNumberPolicy implements ToNumberStrategy
+ToNumberPolicy -[hidden]-> DOUBLE
+ToNumberPolicy -[hidden]-> LAZILY_PARSED_NUMBER
+ToNumberPolicy -[hidden]-> LONG_OR_DOUBLE
+ToNumberPolicy -[hidden]-> BIG_DECIMAL
+
+' ToNumberPolicy members and methods
+ToNumberPolicy : + readNumber(JsonReader in) : Number
+
+ 
+' ReflectionAccessFilter constants
+ReflectionAccessFilter : BLOCK_INACCESSIBLE_JAVA
+ReflectionAccessFilter : BLOCK_ALL_JAVA
+ReflectionAccessFilter : BLOCK_ALL_ANDROID
+ReflectionAccessFilter : BLOCK_ALL_PLATFORM
+
+' ReflectionAccessFilter constants implementation
+ReflectionAccessFilter -[hidden]-> BLOCK_INACCESSIBLE_JAVA
+ReflectionAccessFilter -[hidden]-> BLOCK_ALL_JAVA
+ReflectionAccessFilter -[hidden]-> BLOCK_ALL_ANDROID
+ReflectionAccessFilter -[hidden]-> BLOCK_ALL_PLATFORM
+
+ 
+' JsonSyntaxException is a subclass of JsonParseException
+JsonSyntaxException -|> JsonParseException : extends
+
+' LongSerializationPolicy implements JsonElement serialization
+LongSerializationPolicy : + serialize(Long value) : JsonElement
+
+ 
+' Define relationships
+
+JsonSerializer <|.. JsonSerializationContext : Implements
+JsonStreamParser ..> JsonReader : Uses
+JsonStreamParser --> JsonElement : Returns
+
+ 
+JsonParser "1" --> "*" JsonElement : parses
+JsonElement <|-- JsonPrimitive
+
+ 
+JsonParseException <|-- RuntimeException
+JsonObject --|> JsonElement
+
+ 
+
+JsonIOException <|-- JsonParseException
+JsonNull --|> JsonElement
+
+ 
+JsonDeserializer --> JsonElement
+JsonDeserializer --> JsonDeserializationContext
+JsonElement <|-- JsonObject
+JsonElement <|-- JsonArray
+JsonElement <|-- JsonPrimitive
+JsonElement <|-- JsonNull
+
+JsonArray ..|> JsonElement
+JsonArray --> JsonElement
+JsonArray --> JsonNull
+JsonArray --> JsonPrimitive
+JsonArray --> NonNullElementWrapperList
+FieldNamingPolicy ..|> FieldNamingStrategy : implements
+FieldNamingStrategy --> Field
+FieldNamingStrategy --> List
+
+
+
+ExclusionStrategy ..> FieldAttributes : uses
+FieldAttributes --> Field
+FieldAttributes --> Type
+FieldAttributes --> Annotation
+FieldAttributes --> Collection
+
+
+
+Gson --> GsonBuilder
+GsonBuilder --> Gson
+Gson --> ConstructorConstructor
+Gson --> JsonAdapterAnnotationTypeAdapterFactory
+Gson --> TypeAdapterFactory
+Gson --> TypeAdapter
+Gson --> JsonReader
+Gson --> JsonWriter
+Gson --> JsonElement
+Gson --> TypeToken
+Gson --> ToNumberStrategy
+Gson --> LongSerializationPolicy
+Gson --> ReflectionAccessFilter
+GsonBuilder --> TypeAdapterFactory
+GsonBuilder --> InstanceCreator
+GsonBuilder --> Excluder
+GsonBuilder --> FieldNamingStrategy
+GsonBuilder --> ReflectionAccessFilter
+GsonBuilder --> FormattingStyle
+
+'com.google..gson.reflect
+
+TypeToken --> GsonTypes
+TypeToken --> TroubleshootingGuide
+
+' internal bind package 
+
+
+' ========== Inheritance ==========
+ArrayTypeAdapter --|> TypeAdapter
+EnumTypeAdapter --|> TypeAdapter
+DefaultDateTypeAdapter --|> TypeAdapter
+JsonTreeReader --|> JsonReader
+JsonTreeWriter --|> JsonWriter
+SerializationDelegatingTypeAdapter --|> TypeAdapter
+TreeTypeAdapter --|> SerializationDelegatingTypeAdapter
+TypeAdapterRuntimeTypeWrapper --|> TypeAdapter
+
+' ========== Inner Class Relationships ==========
+CollectionTypeAdapterFactory .down.> CollectionTypeAdapterFactory.Adapter : <<uses>>
+DefaultDateTypeAdapter .down.> DateType : <<inner>>
+TreeTypeAdapter .down.> TreeTypeAdapter.GsonContextImpl
+TreeTypeAdapter .down.> TreeTypeAdapter.SingleTypeFactory
+
+' ========== Dependencies ==========
+ArrayTypeAdapter --> Gson
+ArrayTypeAdapter --> JsonReader
+ArrayTypeAdapter --> JsonWriter
+ArrayTypeAdapter --> JsonToken
+CollectionTypeAdapterFactory --> TypeToken
+CollectionTypeAdapterFactory --> TypeAdapter
+CollectionTypeAdapterFactory --> Gson
+CollectionTypeAdapterFactory.Adapter --> JsonReader
+CollectionTypeAdapterFactory.Adapter --> JsonWriter
+DateType --> TypeAdapterFactory
+EnumTypeAdapter --> JsonToken
+EnumTypeAdapter --> SerializedName
+JsonAdapterAnnotationTypeAdapterFactory --> JsonAdapter
+JsonAdapterAnnotationTypeAdapterFactory --> JsonDeserializer
+JsonAdapterAnnotationTypeAdapterFactory --> JsonSerializer
+JsonElementTypeAdapter --> JsonElement
+JsonElementTypeAdapter --> JsonTreeReader
+JsonElementTypeAdapter --> JsonWriter
+JsonTreeReader --> JsonToken
+JsonTreeReader --> MalformedJsonException
+JsonTreeWriter --> JsonElement
+MapTypeAdapterFactory --> Gson
+MapTypeAdapterFactory --> TypeToken
+MapTypeAdapterFactory --> JsonSyntaxException
+MapTypeAdapterFactory.Adapter --> JsonReader
+MapTypeAdapterFactory.Adapter --> JsonWriter
+NumberTypeAdapter --> JsonSyntaxException
+NumberTypeAdapter --> JsonReader
+NumberTypeAdapter --> JsonWriter
+ObjectTypeAdapter --> TypeToken
+ObjectTypeAdapter --> Gson
+ObjectTypeAdapter --> JsonToken
+ReflectiveTypeAdapterFactory --> JsonIOException
+ReflectiveTypeAdapterFactory --> JsonSyntaxException
+ReflectiveTypeAdapterFactory --> JsonParseException
+ReflectiveTypeAdapterFactory --> JsonAdapter
+ReflectiveTypeAdapterFactory --> SerializedName
+ReflectiveTypeAdapterFactory --> ReflectionAccessFilter
+TypeAdapterRuntimeTypeWrapper --> JsonReader
+TypeAdapterRuntimeTypeWrapper --> JsonWriter
+TypeAdapterRuntimeTypeWrapper --> TypeToken
+TypeAdapterRuntimeTypeWrapper --> SerializationDelegatingTypeAdapter
+TypeAdapters --> JsonReader
+TypeAdapters --> JsonWriter
+TypeAdapters --> JsonElement
+TypeAdapters --> JsonIOException
+TypeAdapters --> JsonSyntaxException
+
+
+' internal package 
+
+' Associations from ConstructorConstructor
+
+ConstructorConstructor --> "1..*" InstanceCreator : instanceCreators
+ConstructorConstructor --> "*" ReflectionAccessFilter : reflectionFilters
+ConstructorConstructor --> "*" TypeToken : typeToken
+ConstructorConstructor --> "*" FilterResult : applies
+ConstructorConstructor --> "*" JsonIOException : throws
+ConstructorConstructor --> "*" ReflectionHelper : uses
+ConstructorConstructor --> "1" UnsafeAllocator : uses
+
+' Associations from Excluder
+
+
+Excluder --> "1" ExclusionStrategy : uses
+Excluder --> "1" TypeAdapterFactory : implements
+Excluder --> "1" FieldAttributes : uses
+Excluder --> "1" Gson : uses
+Excluder --> "1" TypeAdapter : creates
+Excluder --> "1" TypeToken : uses
+Excluder --> "1" JsonReader : reads
+Excluder --> "1" JsonWriter : writes
+
+TypeAdapterFactory <|-- Excluder : implements
+ExclusionStrategy <|-- Excluder : implements
+FieldAttributes --> Field : uses
+TypeToken --> Class : uses
+TypeAdapter --> JsonReader : reads
+TypeAdapter --> JsonWriter : writes
+
+' Associations from GsonPreconditions
+
+GsonPreconditions --> "1" NullPointerException : throws
+GsonPreconditions --> "1" IllegalArgumentException : throws
+
+
+
+
+  ' Associations from GSONTYPE
+  GsonTypes --> ParameterizedTypeImpl : creates
+  GsonTypes --> GenericArrayTypeImpl : creates
+  GsonTypes --> WildcardTypeImpl : creates
+  GsonTypes ..> GsonPreconditions : uses (checkArgument)
+
+  ' Associations from JsonReaderInternalAccess
+
+  JsonReaderInternalAccess --> JsonReader : uses
+
+  ' Associations from LinkedTreeMap
+
+LinkedTreeMap -- "1" Node : header
+LinkedTreeMap --> "1" Comparator : comparator
+LinkedTreeMap --> "1..*" EntrySet
+LinkedTreeMap --> "1..*" KeySet
+LinkedTreeMapIterator <|-- EntrySetIterator
+LinkedTreeMapIterator <|-- KeySetIterator
+KeySet ..|> AbstractSet
+LinkedTreeMap::KeySet --|> AbstractSet
+EntrySet ..|> AbstractSet
+LinkedTreeMap::EntrySet --|> AbstractSet
+LinkedTreeMap --> Node : uses
+  ' Associations from Primitives
+
+Primitives --> Type : uses
+
+
+  ' Associations from ReflectionAccessFilterHelper
+
+ReflectionAccessFilterHelper --> AccessChecker : inner static
+ 
+ReflectionAccessFilterHelper --> ReflectionAccessFilter : parameter
+ReflectionAccessFilterHelper --> FilterResult : return type
+ 
+
+
+  ' Associations from Streams
+
+Streams ..> AppendableWriter : uses
+AppendableWriter *-- CurrentWrite
+ CurrentWrite ..|> CharSequence
+
+Streams ..> JsonElement
+Streams ..> JsonReader
+Streams ..> JsonWriter
+Streams ..> JsonIOException
+Streams ..> JsonSyntaxException
+Streams ..> JsonParseException
+Streams ..> TypeAdapters
+ 
+
+'internal.reflect 
+
+' Associations
+ReflectionHelper --> JsonIOException : throws
+ReflectionHelper --> GsonBuildConfig : uses version
+ReflectionHelper --> TroubleshootingGuide : uses for error URLs
+
+
+' sql package 
+
+' ========== Dependencies ==========
+
+SqlTypesSupport ..> DateType : <<uses>>
+SqlTypesSupport ..> TypeAdapterFactory : <<uses>>
+SqlTypesSupport ..> SqlDateTypeAdapter : <<uses>>
+SqlTypesSupport ..> SqlTimeTypeAdapter : <<uses>>
+SqlTypesSupport ..> SqlTimestampTypeAdapter : <<uses>>
+
+SqlTimestampTypeAdapter ..> Gson : <<uses>>
+SqlTimestampTypeAdapter ..> TypeAdapter : <<uses>>
+SqlTimestampTypeAdapter ..> JsonReader : <<uses>>
+SqlTimestampTypeAdapter ..> JsonWriter : <<uses>>
+SqlTimestampTypeAdapter ..> TypeAdapterFactory : <<uses>>
+SqlTimestampTypeAdapter ..> TypeToken : <<uses>>
+
+SqlTimeTypeAdapter ..> Gson : <<uses>>
+SqlTimeTypeAdapter ..> JsonSyntaxException : <<uses>>
+SqlTimeTypeAdapter ..> TypeAdapter : <<uses>>
+SqlTimeTypeAdapter ..> JsonReader : <<uses>>
+SqlTimeTypeAdapter ..> JsonWriter : <<uses>>
+SqlTimeTypeAdapter ..> DateFormat : <<uses>>
+SqlTimeTypeAdapter ..> TypeAdapterFactory : <<uses>>
+SqlTimeTypeAdapter ..> TypeToken : <<uses>>
+
+SqlDateTypeAdapter ..> Gson : <<uses>>
+SqlDateTypeAdapter ..> JsonSyntaxException : <<uses>>
+SqlDateTypeAdapter ..> TypeAdapter : <<uses>>
+SqlDateTypeAdapter ..> JsonReader : <<uses>>
+SqlDateTypeAdapter ..> JsonWriter : <<uses>>
+SqlDateTypeAdapter ..> TypeAdapterFactory : <<uses>>
+SqlDateTypeAdapter ..> TypeToken : <<uses>>
+
+@enduml

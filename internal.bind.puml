@@ -1,0 +1,267 @@
+@startuml
+
+package "com.google.gson.internal.bind" {
+
+' ---------- ArrayTypeAdapter ----------
+class ArrayTypeAdapter {
+  - componentType : Class
+  - componentTypeAdapter : TypeAdapter
+  + ArrayTypeAdapter(Gson, TypeAdapter, Class)
+  + read(JsonReader) : Object
+  + write(JsonWriter, Object) : void
+}
+
+' ---------- CollectionTypeAdapterFactory ----------
+class CollectionTypeAdapterFactory {
+  - constructorConstructor : ConstructorConstructor
+  + CollectionTypeAdapterFactory(ConstructorConstructor)
+  + create(Gson, TypeToken) : TypeAdapter
+}
+
+' ---------- Inner Adapter Class ----------
+class CollectionTypeAdapterFactoryAdapter {
+  - elementTypeAdapter : TypeAdapter
+  - constructor : ObjectConstructor
+  + read(JsonReader) : Collection
+  + write(JsonWriter, Collection) : void
+}
+ 
+' ---------- DefaultDateTypeAdapter ----------
+class DefaultDateTypeAdapter {
+  - dateFormats : List
+  - dateType : DateType
+  + write(JsonWriter, Date) : void
+  + read(JsonReader) : Date
+  + toString() : String
+}
+
+
+' ---------- DateType Inner Class ----------
+class DateType {
+  - dateClass : Class
+  + createAdapterFactory(String) : TypeAdapterFactory
+  + createAdapterFactory(int, int) : TypeAdapterFactory
+  + deserialize(Date) : Date
+}
+
+' ---------- EnumTypeAdapter ----------
+class EnumTypeAdapter {
+  - nameToConstant : Map
+  - stringToConstant : Map
+  - constantToName : Map
+  + read(JsonReader)
+  + write(JsonWriter, value)
+}
+
+' ---------- TypeAdapterFactory ----------
+class TypeAdapterFactory {
+  + create(Gson, TypeToken) : TypeAdapter
+}
+
+' ---------- JsonAdapterAnnotationTypeAdapterFactory ----------
+class JsonAdapterAnnotationTypeAdapterFactory {
+  - constructorConstructor : ConstructorConstructor
+  - adapterFactoryMap : ConcurrentMap
+}
+
+' ---------- JsonElementTypeAdapter ----------
+class JsonElementTypeAdapter {
+  + read(JsonReader) : JsonElement
+  + write(JsonWriter, JsonElement) : void
+}
+
+' ---------- JsonTreeReader ----------
+class JsonTreeReader {
+  + JsonTreeReader(JsonElement)
+  + beginArray()
+  + endArray()
+  + beginObject()
+  + endObject()
+  + hasNext() : boolean
+  + peek() : JsonToken
+  + nextName() : String
+  + nextString() : String
+  + nextBoolean() : boolean
+  + nextNull() : void
+  + nextDouble() : double
+  + nextLong() : long
+  + nextInt() : int
+  + nextJsonElement() : JsonElement
+  + close() : void
+  + skipValue() : void
+  + getPath() : String
+  + getPreviousPath() : String
+  + promoteNameToValue() : void
+}
+
+' ---------- JsonTreeWriter ----------
+class JsonTreeWriter {
+  + JsonTreeWriter()
+  + get() : JsonElement
+  + beginArray() : JsonWriter
+  + endArray() : JsonWriter
+  + beginObject() : JsonWriter
+  + endObject() : JsonWriter
+  + name(String) : JsonWriter
+  + value(String) : JsonWriter
+  + value(boolean) : JsonWriter
+  + value(Boolean) : JsonWriter
+  + value(float) : JsonWriter
+  + value(double) : JsonWriter
+  + value(long) : JsonWriter
+  + value(Number) : JsonWriter
+  + nullValue() : JsonWriter
+  + flush() : void
+  + close() : void
+}
+
+' ---------- MapTypeAdapterFactory ----------
+class MapTypeAdapterFactory {
+  - constructorConstructor : ConstructorConstructor
+  - complexMapKeySerialization : boolean
+  + create(Gson, TypeToken) : TypeAdapter
+}
+
+class MapTypeAdapterFactoryAdapter {
+  - keyTypeAdapter : TypeAdapter
+  - valueTypeAdapter : TypeAdapter
+  - constructor : ObjectConstructor
+}
+
+' ---------- NumberTypeAdapter ----------
+class NumberTypeAdapter {
+  - toNumberStrategy : ToNumberStrategy
+  + read(JsonReader) : Number
+  + write(JsonWriter, Number) : void
+  + getFactory(ToNumberStrategy) : TypeAdapterFactory
+}
+
+' ---------- ObjectTypeAdapter ----------
+class ObjectTypeAdapter {
+  - gson : Gson
+  - toNumberStrategy : ToNumberStrategy
+  + read(JsonReader) : Object
+  + write(JsonWriter, Object) : void
+  + getFactory(ToNumberStrategy) : TypeAdapterFactory
+  - tryBeginNesting(...) : Object
+  - readTerminal(...) : Object
+}
+
+' ---------- ReflectiveTypeAdapterFactory ----------
+class ReflectiveTypeAdapterFactory {
+  + create(Gson, TypeToken) : TypeAdapter
+  class Adapter
+}
+
+' ---------- SerializationDelegatingTypeAdapter ----------
+abstract class SerializationDelegatingTypeAdapter {
+  + getSerializationDelegate() : TypeAdapter
+}
+
+' ---------- TreeTypeAdapter ----------
+class TreeTypeAdapter {
+  + read(JsonReader)
+  + write(JsonWriter, value)
+  + getSerializationDelegate() : TypeAdapter
+  + newFactory(TypeToken, Object) : TypeAdapterFactory
+  + newFactoryWithMatchRawType(TypeToken, Object) : TypeAdapterFactory
+  + newTypeHierarchyFactory(Class, Object) : TypeAdapterFactory
+}
+
+class TreeTypeAdapterGsonContextImpl {
+  + serialize(Object) : JsonElement
+  + serialize(Object, Type) : JsonElement
+  + deserialize(JsonElement, Type) : Object
+}
+
+class TreeTypeAdapterSingleTypeFactory {
+  + create(Gson, TypeToken) : TypeAdapter
+}
+
+' ---------- TypeAdapterRuntimeTypeWrapper ----------
+class TypeAdapterRuntimeTypeWrapper {
+  - context : Gson
+  - delegate : TypeAdapter
+  - type : Type
+  + read(JsonReader)
+  + write(JsonWriter, value)
+  - isReflective(TypeAdapter) : boolean
+  - getRuntimeTypeIfMoreSpecific(Type, Object) : Type
+}
+
+' ---------- TypeAdapters ----------
+class TypeAdapters {
+  - TypeAdapters()
+  + newFactory(...) : TypeAdapterFactory
+  + newFactoryForMultipleTypes(...) : TypeAdapterFactory
+  + newTypeHierarchyFactory(...) : TypeAdapterFactory
+}
+
+} 
+
+' ========== Inheritance ==========
+ArrayTypeAdapter --|> TypeAdapter
+EnumTypeAdapter --|> TypeAdapter
+DefaultDateTypeAdapter --|> TypeAdapter
+JsonTreeReader --|> JsonReader
+JsonTreeWriter --|> JsonWriter
+SerializationDelegatingTypeAdapter --|> TypeAdapter
+TreeTypeAdapter --|> SerializationDelegatingTypeAdapter
+TypeAdapterRuntimeTypeWrapper --|> TypeAdapter
+
+' ========== Inner Class Relationships ==========
+CollectionTypeAdapterFactory .down.> CollectionTypeAdapterFactory.Adapter : <<uses>>
+DefaultDateTypeAdapter .down.> DateType : <<inner>>
+TreeTypeAdapter .down.> TreeTypeAdapter.GsonContextImpl
+TreeTypeAdapter .down.> TreeTypeAdapter.SingleTypeFactory
+
+' ========== Dependencies ==========
+ArrayTypeAdapter --> Gson
+ArrayTypeAdapter --> JsonReader
+ArrayTypeAdapter --> JsonWriter
+ArrayTypeAdapter --> JsonToken
+CollectionTypeAdapterFactory --> TypeToken
+CollectionTypeAdapterFactory --> TypeAdapter
+CollectionTypeAdapterFactory --> Gson
+CollectionTypeAdapterFactory.Adapter --> JsonReader
+CollectionTypeAdapterFactory.Adapter --> JsonWriter
+DateType --> TypeAdapterFactory
+EnumTypeAdapter --> JsonToken
+EnumTypeAdapter --> SerializedName
+JsonAdapterAnnotationTypeAdapterFactory --> JsonAdapter
+JsonAdapterAnnotationTypeAdapterFactory --> JsonDeserializer
+JsonAdapterAnnotationTypeAdapterFactory --> JsonSerializer
+JsonElementTypeAdapter --> JsonElement
+JsonElementTypeAdapter --> JsonTreeReader
+JsonElementTypeAdapter --> JsonWriter
+JsonTreeReader --> JsonToken
+JsonTreeReader --> MalformedJsonException
+JsonTreeWriter --> JsonElement
+MapTypeAdapterFactory --> Gson
+MapTypeAdapterFactory --> TypeToken
+MapTypeAdapterFactory --> JsonSyntaxException
+MapTypeAdapterFactory.Adapter --> JsonReader
+MapTypeAdapterFactory.Adapter --> JsonWriter
+NumberTypeAdapter --> JsonSyntaxException
+NumberTypeAdapter --> JsonReader
+NumberTypeAdapter --> JsonWriter
+ObjectTypeAdapter --> TypeToken
+ObjectTypeAdapter --> Gson
+ObjectTypeAdapter --> JsonToken
+ReflectiveTypeAdapterFactory --> JsonIOException
+ReflectiveTypeAdapterFactory --> JsonSyntaxException
+ReflectiveTypeAdapterFactory --> JsonParseException
+ReflectiveTypeAdapterFactory --> JsonAdapter
+ReflectiveTypeAdapterFactory --> SerializedName
+ReflectiveTypeAdapterFactory --> ReflectionAccessFilter
+TypeAdapterRuntimeTypeWrapper --> JsonReader
+TypeAdapterRuntimeTypeWrapper --> JsonWriter
+TypeAdapterRuntimeTypeWrapper --> TypeToken
+TypeAdapterRuntimeTypeWrapper --> SerializationDelegatingTypeAdapter
+TypeAdapters --> JsonReader
+TypeAdapters --> JsonWriter
+TypeAdapters --> JsonElement
+TypeAdapters --> JsonIOException
+TypeAdapters --> JsonSyntaxException
+
+@enduml

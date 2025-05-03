@@ -1,0 +1,59 @@
+@startuml
+
+package "com.google.gson.annotations" {
+
+  annotation Expose {
+    +boolean serialize() = true
+    +boolean deserialize() = true
+  }
+
+  annotation JsonAdapter {
+    +Class<?> value()
+    +boolean nullSafe() = true
+  }
+ annotation SerializedName {
+    +String value()
+    +String[] alternate() = {}
+  }
+  
+  annotation Since {
+    +double value()
+  }
+
+  annotation Until {
+    +double value()
+  }
+}
+
+
+ 
+
+' Associations from JsonAdapter
+JsonAdapter --> TypeAdapter : <<uses>>
+JsonAdapter --> TypeAdapterFactory : <<uses>>
+JsonAdapter --> JsonDeserializer : <<uses>>
+JsonAdapter --> JsonSerializer : <<uses>>
+JsonAdapter --> InstanceCreator : <<uses>>
+
+' Associations from Expose
+Expose ..> Gson : <<used with>>
+Expose ..> GsonBuilder : <<configured by>>
+
+
+
+' Associations from SerializedName
+SerializedName --> Gson : <<used with>>
+SerializedName --> GsonBuilder : <<configured by>>
+SerializedName --> FieldNamingPolicy : <<uses>>
+
+
+' Associations from Since
+Since --> Gson : <<used with>>
+Since --> GsonBuilder : <<configured by>>
+
+' Associations from Until
+Until --> Gson : <<used with>>
+Until --> GsonBuilder : <<configured by>>
+
+
+@enduml

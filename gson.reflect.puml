@@ -1,0 +1,26 @@
+@startuml
+
+package "com.google.gson.reflect" {
+
+class TypeToken<T> {
+    + rawType : Class<? super T>
+    + type : Type
+    + hashCode : int
+    + getRawType() : Class<? super T>
+    + getType() : Type
+    + isAssignableFrom(Class<?>) : boolean
+    + isAssignableFrom(Type) : boolean
+    + isAssignableFrom(TypeToken<?>) : boolean
+    + hashCode() : int
+    + equals(Object) : boolean
+    + toString() : String
+    + get(Type) : TypeToken<?>
+    + get(Class<T>) : TypeToken<T>
+    + getParameterized(Type, Type...) : TypeToken<?>
+    + getArray(Type) : TypeToken<?>
+}
+}
+TypeToken --> "uses" --> GsonTypes
+TypeToken --> "uses" --> TroubleshootingGuide
+
+@enduml

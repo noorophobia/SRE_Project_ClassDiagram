@@ -1,0 +1,15 @@
+@startuml
+package "com.google.gson.internal.bind.util" {
+
+' Main utility class
+class ISO8601Utils {
+  - UTC_ID : String
+  - TIMEZONE_UTC : TimeZone
+  + format(date : Date) : String
+  + format(date : Date, millis : boolean) : String
+  + format(date : Date, millis : boolean, tz : TimeZone) : String
+  + parse(date : String, pos : ParsePosition) : Date
+}
+}
+
+@enduml

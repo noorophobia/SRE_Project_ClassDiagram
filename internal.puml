@@ -1,0 +1,381 @@
+@startuml
+package "com.google.gson.internal" {
+
+class ConstructorConstructor {
+  -Map<Type, InstanceCreator<?>> instanceCreators
+  -boolean useJdkUnsafe
+  -List<ReflectionAccessFilter> reflectionFilters
+  
+  +ConstructorConstructor(instanceCreators: Map<Type, InstanceCreator<?>>, useJdkUnsafe: boolean, reflectionFilters: List<ReflectionAccessFilter>)
+  +<T> ObjectConstructor<T> get(typeToken: TypeToken<T>): ObjectConstructor<T>
+  +<T> ObjectConstructor<T> get(typeToken: TypeToken<T>, allowUnsafe: boolean): ObjectConstructor<T>
+  -String checkInstantiable(c: Class<?>): String
+  -<T> ObjectConstructor<T> newSpecialCollectionConstructor(type: Type, rawType: Class<? super T>): ObjectConstructor<T>
+  -<T> ObjectConstructor<T> newDefaultConstructor(rawType: Class<? super T>, filterResult: FilterResult): ObjectConstructor<T>
+  -<T> ObjectConstructor<T> newDefaultImplementationConstructor(type: Type, rawType: Class<? super T>): ObjectConstructor<T>
+  -ObjectConstructor<? extends Collection<? extends Object>> newCollectionConstructor(rawType: Class<?>): ObjectConstructor<? extends Collection<? extends Object>>
+  -ObjectConstructor<? extends Map<? extends Object, Object>> newMapConstructor(type: Type, rawType: Class<?>): ObjectConstructor<? extends Map<? extends Object, Object>>
+  -<T> ObjectConstructor<T> newUnsafeAllocator(rawType: Class<? super T>): ObjectConstructor<T>
+}
+ 
+class Excluder {
+  - double version
+  - int modifiers
+  - boolean serializeInnerClasses
+  - boolean requireExpose
+  - List<ExclusionStrategy> serializationStrategies
+  - List<ExclusionStrategy> deserializationStrategies
+  + Excluder clone()
+  + Excluder withVersion(double ignoreVersionsAfter)
+  + Excluder withModifiers(int... modifiers)
+  + Excluder disableInnerClassSerialization()
+  + Excluder excludeFieldsWithoutExposeAnnotation()
+  + Excluder withExclusionStrategy(ExclusionStrategy exclusionStrategy, boolean serialization, boolean deserialization)
+  + <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
+  + boolean excludeField(Field field, boolean serialize)
+  + boolean excludeClass(Class<?> clazz, boolean serialize)
+}
+
+class GsonPreconditions {
+  - GsonPreconditions()
+  + static <T> T checkNotNull(T obj)
+  + static void checkArgument(boolean condition)
+}
+ 
+  class GsonTypes {
+    - GsonTypes()
+    {static} +ParameterizedType newParameterizedTypeWithOwner(Type ownerType, Class<?> rawType, Type... typeArguments)
+    {static} +GenericArrayType arrayOf(Type componentType)
+    {static} +WildcardType subtypeOf(Type bound)
+    {static} +WildcardType supertypeOf(Type bound)
+    {static} +Type canonicalize(Type type)
+    {static} +Class<?> getRawType(Type type)
+    {static} +boolean equals(Type a, Type b)
+  }
+class JavaVersion {
+  - static final int majorJavaVersion
+  - static int determineMajorJavaVersion()
+  - static int parseMajorJavaVersion(String javaVersion)
+  - static int parseDotted(String javaVersion)
+  - static int extractBeginningInt(String javaVersion)
+  + static int getMajorJavaVersion()
+  + static boolean isJava9OrLater()
+  - JavaVersion()
+}
+ 
+class JsonReaderInternalAccess {
+  + static volatile JsonReaderInternalAccess INSTANCE
+  + abstract void promoteNameToValue(JsonReader reader)
+}
+
+ 
+class LazilyParsedNumber {
+  - final String value
+  + LazilyParsedNumber(String value)
+  + int intValue()
+  + long longValue()
+  + float floatValue()
+  + double doubleValue()
+  + String toString()
+  + int hashCode()
+  + boolean equals(Object obj)
+  - BigDecimal asBigDecimal()
+  - Object writeReplace()
+  - void readObject(ObjectInputStream in)
+}
+
+ 
+' ========== Main Class ==========
+class LinkedTreeMap<K, V> {
+  - Comparator<? super K> comparator
+  - boolean allowNullValues
+  - Node<K, V> root
+  - int size
+  - int modCount
+  - Node<K, V> header
+  + LinkedTreeMap()
+  + LinkedTreeMap(boolean allowNullValues)
+  + LinkedTreeMap(Comparator<? super K>, boolean allowNullValues)
+  + int size()
+  + V get(Object key)
+  + boolean containsKey(Object key)
+  + V put(K key, V value)
+  + V remove(Object key)
+  + void clear()
+  + Set<Entry<K, V>> entrySet()
+  + Set<K> keySet()
+}
+
+ 
+
+' ========== Node ==========
+class Node<K, V> {
+  - Node<K, V> parent
+  - Node<K, V> left
+  - Node<K, V> right
+  - Node<K, V> next
+  - Node<K, V> prev
+  - K key
+  - V value
+  - int height
+  + Node(boolean allowNullValue)
+  + Node(boolean, Node<K, V>, K, Node<K, V>, Node<K, V>)
+  + K getKey()
+  + V getValue()
+  + V setValue(V value)
+  + boolean equals(Object)
+  + int hashCode()
+  + Node<K, V> first()
+  + Node<K, V> last()
+}
+
+
+' ========== EntrySet ==========
+class EntrySet {
+  + int size()
+  + Iterator<Entry<K, V>> iterator()
+  + boolean contains(Object)
+  + boolean remove(Object)
+  + void clear()
+}
+
+ 
+
+' ========== KeySet ==========
+class KeySet {
+  + int size()
+  + Iterator<K> iterator()
+  + boolean contains(Object)
+  + boolean remove(Object)
+  + void clear()
+}
+
+
+
+' ========== LinkedTreeMapIterator ==========
+abstract class LinkedTreeMapIterator<T> {
+  - Node<K, V> next
+  - Node<K, V> lastReturned
+  - int expectedModCount
+  + boolean hasNext()
+  + void remove()
+}
+
+ 
+
+class NonNullElementWrapperList<E> {
+  - ArrayList<E> delegate
+  + NonNullElementWrapperList(ArrayList<E> delegate)
+  + E get(int index)
+  + int size()
+  + E set(int index, E element)
+  + void add(int index, E element)
+  + E remove(int index)
+  + void clear()
+  + boolean remove(Object o)
+  + boolean removeAll(Collection<?> c)
+  + boolean retainAll(Collection<?> c)
+  + boolean contains(Object o)
+  + int indexOf(Object o)
+  + int lastIndexOf(Object o)
+  + Object[] toArray()
+  + <T> T[] toArray(T[] a)
+  + boolean equals(Object o)
+  + int hashCode()
+}
+
+ 
+class NumberLimits {
+  - static final int MAX_NUMBER_STRING_LENGTH
+  - NumberLimits()
+  - static void checkNumberStringLength(String s)
+  + static BigDecimal parseBigDecimal(String s)
+  + static BigInteger parseBigInteger(String s)
+}
+
+
+' ---------- Interface ----------
+interface ObjectConstructor<T> {
+  + T construct()
+}
+
+' ---------- PreJava9DateFormatProvider Class ----------
+class PreJava9DateFormatProvider {
+  - PreJava9DateFormatProvider()
+  + static DateFormat getUsDateTimeFormat(int dateStyle, int timeStyle)
+  - static String getDatePartOfDateTimePattern(int dateStyle)
+  - static String getTimePartOfDateTimePattern(int timeStyle)
+}
+
+' 
+ 
+' -------- Primitives Class --------
+class Primitives {
+  - Primitives()
+  + static boolean isPrimitive(Type type)
+  + static boolean isWrapperType(Type type)
+  + static <T> Class<T> wrap(Class<T> type)
+  + static <T> Class<T> unwrap(Class<T> type)
+}
+
+ 
+
+' -------- ReflectionAccessFilterHelper Class has inner classes  --------
+class ReflectionAccessFilterHelper {
+  - ReflectionAccessFilterHelper()
+  + static boolean isJavaType(Class<?> c)
+  + static boolean isAndroidType(Class<?> c)
+  + static boolean isAnyPlatformType(Class<?> c)
+  + static FilterResult getFilterResult(List<ReflectionAccessFilter> filters, Class<?> c)
+  + static boolean canAccess(AccessibleObject obj, Object o)
+}
+ 
+ 
+
+
+class AccessChecker {
+  + boolean canAccess(AccessibleObject accessibleObject, Object object)
+  {abstract}
+  + static AccessChecker INSTANCE
+}
+
+' --------  Inner Class ended --------
+
+' -------- Streams has Inner Classes --------
+
+ 
+class Streams {
+  - Streams()
+  + static JsonElement parse(JsonReader reader)
+  + static void write(JsonElement element, JsonWriter writer)
+  + static Writer writerForAppendable(Appendable appendable)
+}
+
+class AppendableWriter {
+  - Appendable appendable
+  - CurrentWrite currentWrite
+  + void write(char[] chars, int offset, int length)
+  + void write(int i)
+  + void write(String str, int off, int len)
+  + void flush()
+  + void close()
+  + Writer append(CharSequence csq)
+  + Writer append(CharSequence csq, int start, int end)
+}
+
+class CurrentWrite {
+  - char[] chars
+  - String cachedString
+  + void setChars(char[] chars)
+  + int length()
+  + char charAt(int i)
+  + CharSequence subSequence(int start, int end)
+  + String toString()
+}
+ ' --------  Inner Classes ended  --------
+
+ abstract class UnsafeAllocator {
+  + abstract <T> T newInstance(Class<T> c)
+  - static void assertInstantiable(Class<?> c)
+  + static final UnsafeAllocator INSTANCE
+  - static UnsafeAllocator create()
+}
+ class TroubleshootingGuide {
+        + createUrl(id: String): String
+    }
+}
+
+ 
+
+ 
+
+' Associations from ConstructorConstructor
+
+ConstructorConstructor --> "1..*" InstanceCreator : instanceCreators
+ConstructorConstructor --> "*" ReflectionAccessFilter : reflectionFilters
+ConstructorConstructor --> "*" TypeToken : typeToken
+ConstructorConstructor --> "*" FilterResult : applies
+ConstructorConstructor --> "*" JsonIOException : throws
+ConstructorConstructor --> "*" ReflectionHelper : uses
+ConstructorConstructor --> "1" UnsafeAllocator : uses
+
+' Associations from Excluder
+
+
+Excluder --> "1" ExclusionStrategy : uses
+Excluder --> "1" TypeAdapterFactory : implements
+Excluder --> "1" FieldAttributes : uses
+Excluder --> "1" Gson : uses
+Excluder --> "1" TypeAdapter : creates
+Excluder --> "1" TypeToken : uses
+Excluder --> "1" JsonReader : reads
+Excluder --> "1" JsonWriter : writes
+
+TypeAdapterFactory <|-- Excluder : implements
+ExclusionStrategy <|-- Excluder : implements
+FieldAttributes --> Field : uses
+TypeToken --> Class : uses
+TypeAdapter --> JsonReader : reads
+TypeAdapter --> JsonWriter : writes
+
+' Associations from GsonPreconditions
+
+GsonPreconditions --> "1" NullPointerException : throws
+GsonPreconditions --> "1" IllegalArgumentException : throws
+
+
+
+
+  ' Associations from GSONTYPE
+  GsonTypes --> ParameterizedTypeImpl : creates
+  GsonTypes --> GenericArrayTypeImpl : creates
+  GsonTypes --> WildcardTypeImpl : creates
+  GsonTypes ..> GsonPreconditions : uses (checkArgument)
+
+  ' Associations from JsonReaderInternalAccess
+
+  JsonReaderInternalAccess --> JsonReader : uses
+
+  ' Associations from LinkedTreeMap
+
+LinkedTreeMap -- "1" Node : header
+LinkedTreeMap --> "1" Comparator : comparator
+LinkedTreeMap --> "1..*" EntrySet
+LinkedTreeMap --> "1..*" KeySet
+LinkedTreeMapIterator <|-- EntrySetIterator
+LinkedTreeMapIterator <|-- KeySetIterator
+KeySet ..|> AbstractSet
+LinkedTreeMap::KeySet --|> AbstractSet
+EntrySet ..|> AbstractSet
+LinkedTreeMap::EntrySet --|> AbstractSet
+LinkedTreeMap --> Node : uses
+  ' Associations from Primitives
+
+Primitives --> Type : uses
+
+
+  ' Associations from ReflectionAccessFilterHelper
+
+ReflectionAccessFilterHelper --> AccessChecker : inner static
+ 
+ReflectionAccessFilterHelper --> ReflectionAccessFilter : parameter
+ReflectionAccessFilterHelper --> FilterResult : return type
+ 
+
+
+  ' Associations from Streams
+
+Streams ..> AppendableWriter : uses
+AppendableWriter *-- CurrentWrite
+ CurrentWrite ..|> CharSequence
+
+Streams ..> JsonElement
+Streams ..> JsonReader
+Streams ..> JsonWriter
+Streams ..> JsonIOException
+Streams ..> JsonSyntaxException
+Streams ..> JsonParseException
+Streams ..> TypeAdapters
+ 
+
+@enduml
