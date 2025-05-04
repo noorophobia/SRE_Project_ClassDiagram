@@ -276,10 +276,7 @@ class JsonParser {
 }
 
 class JsonPrimitive {
-  +JsonPrimitive(bool: Boolean)
-  +JsonPrimitive(number: Number)
-  +JsonPrimitive(string: String)
-  +JsonPrimitive(c: Character)
+  +JsonPrimitive(value: Object)
   +deepCopy() : JsonPrimitive
   +isBoolean() : boolean
   +getAsBoolean() : boolean
