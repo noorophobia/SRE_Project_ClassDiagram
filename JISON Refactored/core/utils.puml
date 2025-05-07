@@ -1,0 +1,13 @@
+@startuml utility_functions
+
+!theme plain
+
+class Utils {
+    +each(obj: Object, func: Function): void
+    +processOperators(ops: Array): Object
+    +printAction(a: Array, gen: Object): String
+}
+
+ 
+
+@enduml

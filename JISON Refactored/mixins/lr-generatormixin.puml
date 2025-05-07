@@ -1,0 +1,20 @@
+@startuml parse_table_builder_module
+
+!theme plain
+
+class lrGeneratorMixin {
+    +buildTable(): void
+    +Item: Item
+    +ItemSet: ItemSet
+    +closureOperation(itemSet: ItemSet): ItemSet
+    +gotoOperation(itemSet: ItemSet, symbol: String): ItemSet
+    +canonicalCollection(): Set
+    +canonicalCollectionInsert(symbol: String, itemSet: ItemSet, states: Set, stateNum: int): void
+    +parseTable(itemSets: Set): Array
+}
+
+lrGeneratorMixin --> Item
+
+lrGeneratorMixin --> tableGenerator
+
+@enduml

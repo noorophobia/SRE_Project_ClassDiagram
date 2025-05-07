@@ -1,0 +1,22 @@
+@startuml LR1GeneratorModule
+
+!theme plain
+
+class LR1Generator {
+    - type: String
+    + lookAheads(state: ItemSet, item: Item): Array
+    + afterconstructor(): void
+}
+
+
+
+LR1Generator --|> Generator
+LR1Generator --> LookaheadMixin
+LR1Generator --> LRGeneratorMixin
+LR1Generator --> Item
+LR1Generator --> ItemSet
+LR1Generator --> Set
+
+ItemSet --|> Set
+
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+class Generator {
+  - options : object
+  - terms : object
+  - operators : object
+  - productions : array
+  - conflicts : int
+  - resolutions : array
+  - parseParams : any
+  - yy : object
+  - actionInclude : string
+  - moduleInclude : string
+  - DEBUG : boolean
+  - terminals : array
+  - lexer : object
+  - nonterminals : object
+  - symbols : array
+
+  + constructor(grammar: any, opt: any)
+  + processGrammar(grammar: any) : void
+}
+
+class Nonterminal
+class Production
+
+Generator "1" *-- "*" Nonterminal : uses
+Generator "1" *-- "*" Production : creates
+@enduml

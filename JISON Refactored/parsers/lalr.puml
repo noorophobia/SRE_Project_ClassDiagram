@@ -1,0 +1,28 @@
+@startuml LALRGeneratorModule
+
+!theme plain
+
+class LALRGenerator {
+    - type: String
+    - states: Set
+    - terms_: Object
+    - newg: Object
+    - inadequateStates: Array
+    - onDemandLookahead: Boolean
+    + constructor(grammar: Object, options: Object)
+    + _initLookahead(): void
+    + lookAheads(state: Object, item: Object): Array
+    + go(p: String, w: Array): String
+    + goPath(p: String, w: Array): Object
+    + buildNewGrammar(): void
+    + unionLookaheads(): void
+}
+
+
+
+LALRGenerator --|> Generator
+LALRGenerator --> Nonterminal
+LALRGenerator --> Production
+LALRGenerator --> TableGenerator
+
+@enduml

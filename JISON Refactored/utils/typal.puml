@@ -1,0 +1,27 @@
+@startuml
+
+class typal {
+    +mix(...objects): Object
+    +beget(...objects): Object
+    +construct(...objects): Function
+    +constructor(): Object
+}
+
+typal ..> Object : uses
+typal ..> Function : constructs
+typal ..> RegExp : uses for "before|after"
+
+note right of typal::mix
+  Mixes own properties of arguments
+  into 'this', supporting before/after layering.
+end note
+
+note right of typal::beget
+  Sugar for Object.create + mix
+end note
+
+note right of typal::construct
+  Creates a class-like constructor
+end note
+
+@enduml

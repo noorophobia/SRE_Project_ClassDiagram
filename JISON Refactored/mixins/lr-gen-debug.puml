@@ -1,0 +1,12 @@
+@startuml parse_table_module
+
+!theme plain
+
+class lrGenDebug {
+    +beforeparseTable(): void
+    +afterparseTable(): void
+    +aftercanonicalCollection(states: Array): void
+}
+
+
+@enduml

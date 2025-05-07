@@ -1,0 +1,102 @@
+@startuml
+
+class Jison {
+    +Jison(grammar, options)
+    +parse(): Object
+    +generate(): String
+    -buildParser(): Object
+    -parseBNF(grammar: String): Object
+    -parseEBNF(grammar: String): Object
+    -processGrammar(grammar: Object): Object
+    -createParser(): Object
+    -getLexerSource(): String
+    -getParserSource(): String
+    -getSource(): String
+    -buildLexer(): Object
+    -buildSymbolTable(): void
+    -prepareParser(): void
+    -augmentGrammar(): void
+    -generateTable(): Object
+    -emitSource(): String
+    -mergeOptions(userOptions: Object): Object
+    -addDeclaration(decl: String): void
+    -addInclude(include: String): void
+    -collectModuleIncludes(): String
+    -collectModuleCode(): String
+    -writeModuleIncludes(): void
+    -writeModuleCode(): void
+    -writeExports(): void
+    -checkGrammar(): void
+    -resolveTokens(): void
+    -normalizeGrammar(): void
+    -expandMacros(): void
+    -removeEpsilonProductions(): void
+    -detectLeftRecursion(): void
+    -generateLookahead(): void
+    -optimizeTable(): void
+    -generateParserSource(): String
+    -generateLexerSource(): String
+}
+
+ 
+class typal {
+    +mix(...objects): Object
+    +beget(...objects): Object
+    +construct(...objects): Function
+    +constructor(): Object
+}
+
+' Define the Set class
+class Set {
+  -_items: array
+  +Set_constructor(set: array, raw: boolean)
+  +concat(setB: Set or array): Set
+  +eq(set: Set): boolean
+  +indexOf(item: any): number
+  +union(set: Set): Set
+  +intersection(set: Set): Set
+  +complement(set: Set): Set
+  +subset(set: Set): boolean
+  +superset(set: Set): boolean
+  +joinSet(set: Set): Set
+  +contains(item: any): boolean
+  +item(v: number, val: any): any
+  +i(v: number, val: any): any
+  +first(): any
+  +last(): any
+  +size(): number
+  +isEmpty(): boolean
+  +copy(): Set
+  +toString(): string
+  +push(...items: any[]): number
+  +shift(): any
+  +unshift(...items: any[]): number
+  +forEach(callback: function): void
+  +some(callback: function): boolean
+  +every(callback: function): boolean
+  +join(separator?: string): string
+  +sort(compareFn?: function): Set
+  +filter(callback: function): Set
+  +slice(start?: number, end?: number): Set
+  +map(callback: function): Set
+  +union(a: array, b: array): array {static}
+}
+
+' Relationships (if applicable - in this case, primarily methods of a single class)
+' No explicit relationships to other classes are defined in the snippet,
+' but we can show the constructor's dependency on Array.
+
+' Note: typal not included in detail as focus is on Set. If needed, add it.
+' typal -- Set : constructs
+
+
+typal ..> Object : uses
+typal ..> Function : constructs
+typal ..> RegExp : uses for "before|after"
+
+
+Jison --> typal : uses
+Jison --> Set : uses
+ 
+
+@enduml
