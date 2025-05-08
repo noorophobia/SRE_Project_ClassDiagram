@@ -1,0 +1,335 @@
+@startuml
+package "lib"{
+package "lrgeneratormixin" {
+    
+    class Item {
+        +production : Production
+        +dotPosition : number
+        +follows : any[]
+        +id : number
+        +markedSymbol() : string
+        +toString() : string
+        --
+        _nextId : static number
+        +Item(production, dotPosition=0, follows=[], id)
+    }
+
+    class ItemSet {
+        -items : Item[]
+        -reductions : any[]
+        -shifts : boolean
+        -inadequate : boolean
+
+        +ItemSet(items = [])
+        +push(item: Item) : void
+        +forEach(cb: function) : void
+        +concat(set: ItemSet) : void
+        +contains(item: Item) : boolean
+        +isEmpty() : boolean
+    }
+
+    class BuildTable {
+        +buildTable()
+        +canonicalCollection()
+        +parseTable(itemSets)
+    }
+
+}
+
+package "mixin" {
+    class lrGeneratorMixin {
+        +createObjectCode : string
+        +nextVariableId : number
+        +variableTokens : string[]
+        +variableTokensLength : number
+        +closureOperation(itemSet : ItemSet) : void
+        +gotoOperation(itemSet : ItemSet, symbol : string) : void
+        +canonicalCollection() : void
+        +parseTable(itemSets : ItemSet[]) : void
+        +generate(opt : object) : void
+        +generateAMDModule(opt : object) : void
+        +generateCommonJSModule(opt : object) : void
+        +generateModule(opt : object) : void
+        +generateModuleExpr() : string
+    }
+ 
+    class LookaheadMixin {
+        +computeLookaheads() : void
+        +followSets() : void
+        +first(symbol : string) : string[]
+        +firstSets() : void
+        +nullableSets() : void
+        +nullable(symbol : string) : boolean
+    }
+
+    class LookaheadDebug {
+        +debugLog() : void
+    }
+
+    lrGeneratorMixin : + closureOperation(itemSet : ItemSet)
+    lrGeneratorMixin : + gotoOperation(itemSet : ItemSet, symbol : string)
+    lrGeneratorMixin : + canonicalCollection()
+    lrGeneratorMixin : + parseTable(itemSets : ItemSet[])
+    lrGeneratorMixin : + generate(opt : object)
+    lrGeneratorMixin : + generateAMDModule(opt : object)
+    lrGeneratorMixin : + generateCommonJSModule(opt : object)
+    lrGeneratorMixin : + generateModule(opt : object)
+    lrGeneratorMixin : + generateModuleExpr()
+}
+
+
+package "parsers" {
+
+class LALR {
+  +afterconstructor(grammar, options)
+  +lookAheads(state, item)
+  +go(p, w)
+  +goPath(p, w)
+  +buildNewGrammar()
+  +unionLookaheads()
+}
+
+class LL {
+  +afterconstructor()
+  +parseTable(productions)
+}
+class LR0 {
+  +afterconstructor()
+}
+
+class LR1 {
+  +afterconstructor()
+  +lookAheads(state, item)
+  +closureOperation(itemSet)
+}
+
+class SLR {
+  +lookAheads(state, item)
+}
+
+
+
+
+
+}
+
+
+package "Utility"{
+' Define classes for the functions
+class "lr" {
+ + printAction(a, gen)
+  + each(obj, func)
+   + findDefaults(states)
+    + resolveConflict(production, op, reduce, shift)
+}
+ 
+' Define the Nonterminal class
+class Nonterminal {
+  - symbol: string
+  - productions: Set
+  - first: List
+  - follows: List
+  - nullable: boolean
+  + Nonterminal(symbol: string)
+  + toString(): string
+}
+
+' Define the Production class
+class Production {
+  - symbol: string
+  - handle: List
+  - nullable: boolean
+  - id: string
+  - first: List
+  - precedence: number
+  + Production(symbol: string, handle: List, id: string)
+  + toString(): string
+}
+
+' Define the Set class
+class Set {
+
+  + Set_constructor(set: List, raw: boolean)
+  + concat(setB: Set): Set
+  + eq(set: Set): boolean
+  + indexOf(item: Any): number
+  + union(set: Set): Set
+  + intersection(set: Set): Set
+  + complement(set: Set): Set
+  + subset(set: Set): boolean
+  + superset(set: Set): boolean
+  + joinSet(set: Set): Set
+  + contains(item: Any): boolean
+  + first(): Any
+  + last(): Any
+  + size(): number
+  + isEmpty(): boolean
+  + copy(): Set
+  + toString(): string
+}
+
+' Define the main class for lexing and token manipulation
+class TokenUtility{
+  - nextVariableId: int
+  - variableTokens: string
+  - variableTokensLength: int
+
+  + tokenStackLex(): any
+  + addTokenStack(fn: string): string
+  + removeErrorRecovery(fn: string): string
+  + createVariable(): string
+}
+
+' Define the Typal class with its core methods
+class Typal {
+  + mix(...args): Typal
+  + beget(...args): Typal
+  + construct(...args): Function
+  + constructor(): Typal
+    + typal_mix(...args): Typal
+  + layerMethod(k: string, fun: Function): void
+
+}
+
+
+}
+
+class GeneratorDebug {
+ + lrGeneratorDebug()
+ + lalrGeneratorDebug()
+ + generatorDebug()
+ + lookaheadDebug()
+ } 
+ 
+
+class Generator {
+    +constructor(grammar, opt)
+    +processGrammarDef(grammar)
+    +augmentGrammar(grammar)
+    +buildProductions(bnf, productions, nonterminals, symbols, operators)
+    +createParser()
+    +trace()
+    +warn()
+    +error(msg)
+}
+class Jison {
+    +version : String
+    +print()
+    +Parser(g, options)
+}
+class Parser {
+    +table : Object
+    +defaultActions : Object
+    +performAction : Function
+    +productions_ : Array
+    +symbols_ : Object
+    +terminals_ : Object
+    +parse(input) : Boolean
+    +trace : Function
+    +warn : Function
+    +error : Function
+    +parseError : Function
+    +init(dict) : void
+}
+
+ 
+
+Parser -> lrGeneratorMixin : Mixes in methods
+Parser -> TokenUtility : Uses utility methods
+lrGeneratorMixin -> Parser : Creates parser via createParser
+
+
+Jison -> Parser : uses
+Jison -> Typal : uses
+
+
+Generator -> Production : uses
+Generator -> Nonterminal : uses
+Generator -> Typal : uses
+Generator -> Set : uses
+Generator -> Set : uses
+Generator -> GeneratorDebug : uses
+Generator -> lr : uses 
+
+Jison -> GeneratorDebug : uses
+Jison -> GeneratorDebug : uses
+Jison -> GeneratorDebug : uses
+Jison -> GeneratorDebug : uses
+ 
+
+
+
+' Define relationships for the Set class
+Set --> Typal : inherits
+
+
+' Define relationships for the Production class
+Production --> Set : uses
+Production --> Typal : inherits
+
+
+
+' Define relationships for the Nonterminal class
+Nonterminal --> Set : uses
+Nonterminal --> Typal : inherits
+
+
+
+
+
+Item --> Production : uses
+BuildTable --> Item : creates
+BuildTable --> ItemSet : creates
+BuildTable --> Set : uses
+BuildTable --> Typal : uses
+BuildTable --> lr : accesses
+ItemSet "1" *-- "*" Item : contains
+
+LookaheadMixin ..> Set : uses
+LookaheadMixin --> LookaheadDebug : mixin (if DEBUG)
+LookaheadMixin ..> Typal : uses (via require)
+LookaheadMixin --> "1" Production : Production[]
+LookaheadMixin --> "1" Nonterminal : NonTerminal[]
+
+lrGeneratorMixin -> Item : uses
+lrGeneratorMixin -> ItemSet : uses
+
+
+
+' Define relationships between classes
+Generator <|-- LALR
+LookaheadMixin <|-- LALR
+lrGeneratorMixin <|-- LALR
+LALR --> Nonterminal : contains
+LALR --> Production : generates
+Nonterminal --> Production : has
+
+Generator <|-- LL
+LookaheadMixin <|-- LL
+LL --> Set : uses
+LL --> Nonterminal : uses
+LL --> Production : uses
+LL --> Production : generates
+  
+  
+' Define relationships between classes
+Generator <|-- LR0
+LookaheadMixin <|-- LR0
+lrGeneratorMixin <|-- LR0
+' Define relationships between classes
+Generator <|-- LR1
+LookaheadMixin <|-- LR1
+lrGeneratorMixin <|-- LR1
+LR1 --> Set : uses
+LR1 --> Nonterminal : uses
+LR1 --> Production : uses
+LR1 --> Item : contains
+LR1 --> ItemSet : uses
+
+
+SLR --> Set : uses
+SLR --> Nonterminal : uses
+SLR --> Production : uses
+SLR --> Item : contains
+}
+@enduml

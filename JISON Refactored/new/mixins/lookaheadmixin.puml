@@ -1,0 +1,25 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+
+class lookaheadMixin {
+    +computeLookaheads() : void
+    +followSets() : void
+    +first(symbol) : string[]
+    +firstSets() : void
+    +nullableSets() : void
+    +nullable(symbol) : boolean
+}
+
+ 
+
+lookaheadMixin ..> Set : uses
+lookaheadMixin --> lookaheadDebug : mixin (if DEBUG)
+lookaheadMixin ..> typal : uses (via require)
+lookaheadMixin --> "1" productions : Production[]
+lookaheadMixin --> "1" nonterminals : NonTerminal{}
+
+
+
+@enduml

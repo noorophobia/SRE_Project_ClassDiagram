@@ -1,0 +1,101 @@
+@startuml
+package "Utility"{
+' Define classes for the functions
+class "lr" {
+ + printAction(a, gen)
+  + each(obj, func)
+   + findDefaults(states)
+    + resolveConflict(production, op, reduce, shift)
+}
+ 
+' Define the Nonterminal class
+class Nonterminal {
+  - symbol: string
+  - productions: Set
+  - first: List
+  - follows: List
+  - nullable: boolean
+  + Nonterminal(symbol: string)
+  + toString(): string
+}
+
+' Define the Production class
+class Production {
+  - symbol: string
+  - handle: List
+  - nullable: boolean
+  - id: string
+  - first: List
+  - precedence: number
+  + Production(symbol: string, handle: List, id: string)
+  + toString(): string
+}
+
+' Define the Set class
+class Set {
+
+  + Set_constructor(set: List, raw: boolean)
+  + concat(setB: Set): Set
+  + eq(set: Set): boolean
+  + indexOf(item: Any): number
+  + union(set: Set): Set
+  + intersection(set: Set): Set
+  + complement(set: Set): Set
+  + subset(set: Set): boolean
+  + superset(set: Set): boolean
+  + joinSet(set: Set): Set
+  + contains(item: Any): boolean
+  + first(): Any
+  + last(): Any
+  + size(): number
+  + isEmpty(): boolean
+  + copy(): Set
+  + toString(): string
+}
+
+' Define the main class for lexing and token manipulation
+class TokenUtility{
+  - nextVariableId: int
+  - variableTokens: string
+  - variableTokensLength: int
+
+  + tokenStackLex(): any
+  + addTokenStack(fn: string): string
+  + removeErrorRecovery(fn: string): string
+  + createVariable(): string
+}
+
+' Define the Typal class with its core methods
+class Typal {
+  + mix(...args): Typal
+  + beget(...args): Typal
+  + construct(...args): Function
+  + constructor(): Typal
+    + typal_mix(...args): Typal
+  + layerMethod(k: string, fun: Function): void
+
+}
+
+
+}
+
+
+
+
+' Define relationships for the Set class
+Set --> Typal : inherits
+
+
+' Define relationships for the Production class
+Production --> Set : uses
+Production --> Typal : inherits
+
+
+
+' Define relationships for the Nonterminal class
+Nonterminal --> Set : uses
+Nonterminal --> Typal : inherits
+
+
+
+@enduml

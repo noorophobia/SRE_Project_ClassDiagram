@@ -1,0 +1,20 @@
+@startuml
+
+
+class ItemSet {
+    -items : Item[]
+    -reductions : any[]
+    -shifts : boolean
+    -inadequate : boolean
+
+    +ItemSet(items = [])
+    +push(item: Item) : void
+    +forEach(cb: function) : void
+    +concat(set: ItemSet) : void
+    +contains(item: Item) : boolean
+    +isEmpty() : boolean
+}
+
+ItemSet "1" *-- "*" Item : contains
+
+@enduml

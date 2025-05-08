@@ -1,0 +1,15 @@
+@startuml LR0GeneratorModule
+
+!theme plain
+
+
+class LR0 {
+  +afterconstructor()
+}
+
+' Define relationships between classes
+Generator <|-- LR0
+LookaheadMixin <|-- LR0
+LRGeneratorMixin <|-- LR0
+
+@enduml

@@ -1,0 +1,76 @@
+@startuml
+
+
+package "parsers" {
+
+class LALR {
+  +afterconstructor(grammar, options)
+  +lookAheads(state, item)
+  +go(p, w)
+  +goPath(p, w)
+  +buildNewGrammar()
+  +unionLookaheads()
+}
+
+class LL {
+  +afterconstructor()
+  +parseTable(productions)
+}
+class LR0 {
+  +afterconstructor()
+}
+
+class LR1 {
+  +afterconstructor()
+  +lookAheads(state, item)
+  +closureOperation(itemSet)
+}
+
+class SLR {
+  +lookAheads(state, item)
+}
+
+
+
+
+
+}
+
+' Define relationships between classes
+Generator <|-- LALR
+LookaheadMixin <|-- LALR
+LRGeneratorMixin <|-- LALR
+LALR --> Nonterminal : contains
+LALR --> Production : generates
+Nonterminal --> Production : has
+
+Generator <|-- LL
+LookaheadMixin <|-- LL
+LL --> Set : uses
+LL --> Nonterminal : uses
+LL --> Production : uses
+LL --> Production : generates
+  
+  
+' Define relationships between classes
+Generator <|-- LR0
+LookaheadMixin <|-- LR0
+LRGeneratorMixin <|-- LR0
+' Define relationships between classes
+Generator <|-- LR1
+LookaheadMixin <|-- LR1
+LRGeneratorMixin <|-- LR1
+LR1 --> Set : uses
+LR1 --> Nonterminal : uses
+LR1 --> Production : uses
+LR1 --> Item : contains
+LR1 --> ItemSet : uses
+
+ 
+LRLookaheadGenerator <|-- SLR
+
+SLR --> Set : uses
+SLR --> Nonterminal : uses
+SLR --> Production : uses
+SLR --> Item : contains
+@enduml

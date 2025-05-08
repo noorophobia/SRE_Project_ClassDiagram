@@ -1,0 +1,13 @@
+@startuml
+
+class Jison {
+    +version : String
+    +print()
+    +Parser(g, options)
+}
+
+Jison -> Parser : uses
+Jison -> Typal : uses
+
+
+@enduml

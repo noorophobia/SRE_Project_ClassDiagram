@@ -1,0 +1,17 @@
+@startuml
+
+class buildTable {
+    +buildTable()
+    +canonicalCollection()
+    +parseTable(itemSets)
+
+}
+
+buildTable --> Item : creates
+buildTable --> ItemSet : creates
+buildTable --> Set : uses
+
+buildTable --> Typal 
+buildTable --> lr : accesses
+ 
+@enduml

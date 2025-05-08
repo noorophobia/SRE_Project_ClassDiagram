@@ -1,0 +1,20 @@
+@startuml
+
+
+class Item {
+    +production : Production
+    +dotPosition : number
+    +follows : any[]
+    +id : number
+    +markedSymbol() : string
+    +toString() : string
+    --
+    _nextId : static number
+    +Item(production, dotPosition=0, follows=[], id)
+}
+
+
+
+Item --> Production : uses
+
+@enduml

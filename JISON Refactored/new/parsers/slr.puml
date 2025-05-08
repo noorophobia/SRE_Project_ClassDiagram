@@ -1,0 +1,16 @@
+@startuml
+ 
+
+class SLR {
+  +lookAheads(state, item)
+}
+
+ 
+LRLookaheadGenerator <|-- SLR
+
+SLR --> Set : uses
+SLR --> Nonterminal : uses
+SLR --> Production : uses
+SLR --> Item : contains
+
+@enduml

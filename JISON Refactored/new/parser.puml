@@ -1,0 +1,27 @@
+@startuml
+
+class Parser {
+    +table : Object
+    +defaultActions : Object
+    +performAction : Function
+    +productions_ : Array
+    +symbols_ : Object
+    +terminals_ : Object
+    +parse(input) : Boolean
+    +trace : Function
+    +warn : Function
+    +error : Function
+    +parseError : Function
+    +init(dict) : void
+}
+
+ 
+
+Parser -> lrGeneratorMixin : Mixes in methods
+Parser -> TokenUtility : Uses utility methods
+lrGeneratorMixin -> Parser : Creates parser via createParser
+
+ 
+ 
+
+@enduml

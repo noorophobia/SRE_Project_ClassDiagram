@@ -1,0 +1,21 @@
+@startuml
+
+class Generator {
+    +constructor(grammar, opt)
+    +processGrammarDef(grammar)
+    +augmentGrammar(grammar)
+    +buildProductions(bnf, productions, nonterminals, symbols, operators)
+    +createParser()
+    +trace()
+    +warn()
+    +error(msg)
+}
+Generator -> Production : uses
+Generator -> Nonterminal : uses
+Generator -> typal : uses
+Generator -> Set : uses
+Generator -> Set : uses
+Generator -> GeneratorDebug : uses
+Generator -> lr : uses 
+
+@enduml

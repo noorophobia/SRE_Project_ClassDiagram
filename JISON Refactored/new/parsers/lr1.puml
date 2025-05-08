@@ -1,0 +1,23 @@
+@startuml
+
+' Define classes
+ 
+ 
+class LR1 {
+  +afterconstructor()
+  +lookAheads(state, item)
+  +closureOperation(itemSet)
+}
+
+' Define relationships between classes
+Generator <|-- LR1
+LookaheadMixin <|-- LR1
+LRGeneratorMixin <|-- LR1
+LR1 --> Set : uses
+LR1 --> Nonterminal : uses
+LR1 --> Production : uses
+LR1 --> Item : contains
+LR1 --> ItemSet : uses
+
+
+@enduml

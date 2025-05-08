@@ -1,0 +1,15 @@
+@startuml
+ 
+ 
+class GeneratorDebug {
+ + lrGeneratorDebug()
+ + lalrGeneratorDebug()
+ + generatorDebug()
+ + lookaheadDebug()
+ } 
+Jison -> GeneratorDebug : uses
+Jison -> GeneratorDebug : uses
+Jison -> GeneratorDebug : uses
+Jison -> GeneratorDebug : uses
+ 
+@enduml

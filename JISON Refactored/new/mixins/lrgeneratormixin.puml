@@ -1,0 +1,44 @@
+@startuml
+
+!define RECTANGLE class
+!define ABSTRACT class
+
+package "mixin" {
+    RECTANGLE lrGeneratorMixin {
+        + createObjectCode 
+        +nextVariableId
+        +variableTokens
++variableTokensLength
+ 
+    }
+ 
+class lookaheadMixin {
+    +computeLookaheads() : void
+    +followSets() : void
+    +first(symbol) : string[]
+    +firstSets() : void
+    +nullableSets() : void
+    +nullable(symbol) : boolean
+}
+ 
+    lrGeneratorMixin : + closureOperation(itemSet)
+    lrGeneratorMixin : + gotoOperation(itemSet, symbol)
+    lrGeneratorMixin : + canonicalCollection()
+    lrGeneratorMixin : + parseTable(itemSets)
+    lrGeneratorMixin : + generate(opt)
+    lrGeneratorMixin : + generateAMDModule(opt)
+    lrGeneratorMixin : + generateCommonJSModule(opt)
+    lrGeneratorMixin : + generateModule(opt)
+    lrGeneratorMixin : + generateModuleExpr()
+ 
+}
+lookaheadMixin ..> Set : uses
+lookaheadMixin --> lookaheadDebug : mixin (if DEBUG)
+lookaheadMixin ..> typal : uses (via require)
+lookaheadMixin --> "1" productions : Production[]
+lookaheadMixin --> "1" nonterminals : NonTerminal{}
+
+    lrGeneratorMixin -> Item : uses
+    lrGeneratorMixin -> ItemSet : uses
+
+@enduml

@@ -1,0 +1,16 @@
+@startuml LLGeneratorModule
+
+!theme plain
+
+class LL {
+  +afterconstructor()
+  +parseTable(productions)
+}
+Generator <|-- LL
+LookaheadMixin <|-- LL
+LL --> Set : uses
+LL --> Nonterminal : uses
+LL --> Production : uses
+LL --> Production : generates
+
+@enduml
