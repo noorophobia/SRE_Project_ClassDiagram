@@ -49,4 +49,4 @@
 
 1. **Clone the repository** using the command:
    ```bash
-   git clone https://github.com/your-username/repository-name.git
+   git clone https://github.com/noorophobia/SRE_Project_ClassDiagram.git
